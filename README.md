@@ -1,6 +1,6 @@
-# Waywallen Packaging
+# Nix Waywallen
 
-This repository contains Nix Flake expressions for packaging [Waywallen](https://github.com/waywallen/waywallen) and its associated components, plugins, and display extensions.
+This repository contains a Nix Flake that packages [Waywallen](https://github.com/waywallen/waywallen) and its associated components, plugins, and display extensions.
 
 ## Packages Available
 

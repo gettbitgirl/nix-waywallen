@@ -120,6 +120,12 @@ llvmPackages_latest.stdenv.mkDerivation rec {
     "-DCMAKE_CXX_COMPILER_CLANG_SCAN_DEPS=${llvmPackages_latest.clang-tools}/bin/clang-scan-deps"
   ];
 
+  qtWrapperArgs = [
+    "--prefix NIXPKGS_QT6_QML_IMPORT_PATH : $out/lib/qt6/qml"
+    "--prefix QML_IMPORT_PATH : $out/lib/qt6/qml"
+    "--prefix QML2_IMPORT_PATH : $out/lib/qt6/qml"
+  ];
+
   meta = with lib; {
     description = "Qt/QML UI component of waywallen";
     homepage = "https://github.com/waywallen/waywallen";

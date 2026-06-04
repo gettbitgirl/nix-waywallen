@@ -42,11 +42,11 @@ rustPlatform.buildRustPackage {
 
   # Build only this binary; the `waywallen` lib crate is a workspace path dep
   # so it is compiled as a dependency automatically without separate fetching.
-  cargoBuildFlags = ["-p" "waywallen-wlroots"];
+  cargoBuildFlags = ["-p" "waywallen-display-layer-shell"];
   doCheck = false;
 
   postInstall = ''
-    wrapProgram $out/bin/waywallen-wlroots \
+    wrapProgram $out/bin/waywallen-display-layer-shell \
       --prefix LD_LIBRARY_PATH : ${lib.makeLibraryPath [libGL vulkan-loader wayland libgbm libxkbcommon]}
   '';
 

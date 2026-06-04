@@ -19,5 +19,10 @@ rec {
   waywallen = pkgs.symlinkJoin {
     name = "waywallen-${waywallen-daemon.version}";
     paths = [ waywallen-daemon waywallen-plugins waywallen-open-wallpaper-engine waywallen-ui ];
+    nativeBuildInputs = [ pkgs.makeWrapper ];
+    postBuild = ''
+      wrapProgram $out/bin/waywallen \
+        --add-flags "--ui $out/bin/waywallen-ui --plugin $out/share/waywallen"
+    '';
   };
 }
