@@ -81,6 +81,9 @@ llvmPackages_latest.stdenv.mkDerivation rec {
       --replace "\''${CMAKE_SOURCE_DIR}/cmake/FetchDeps.cmake" "\''${CMAKE_CURRENT_SOURCE_DIR}/../cmake/FetchDeps.cmake" \
       --replace "fetchdeps(\''${CMAKE_SOURCE_DIR}/deps.json)" "fetchdeps(\''${CMAKE_CURRENT_SOURCE_DIR}/../deps.json NAMES pegtl rstd ncrequest wavsen qml_material QExtra)" \
       --replace "set(QT_QML_GENERATE_QMLLS_INI ON)" "set(QT_QML_GENERATE_QMLLS_INI OFF)"
+
+    substituteInPlace qml/Window.qml \
+      --replace "id: win" "id: win; Binding { target: MD.Token.color; property: \"accentColor\"; value: win.palette.highlight }"
   '';
 
   nativeBuildInputs = [
@@ -105,6 +108,7 @@ llvmPackages_latest.stdenv.mkDerivation rec {
     asio
     libva
     libpulseaudio
+    qt6.qtwayland
     vulkan-loader
   ];
 
