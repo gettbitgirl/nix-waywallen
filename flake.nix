@@ -34,6 +34,11 @@
         waywallen = pkgs.symlinkJoin {
           name = "waywallen-${waywallen-daemon.version}";
           paths = [waywallen-daemon waywallen-plugins waywallen-open-wallpaper-engine waywallen-ui];
+          nativeBuildInputs = [ pkgs.makeWrapper ];
+          postBuild = ''
+            wrapProgram $out/bin/waywallen \
+              --add-flags "--ui $out/bin/waywallen-ui --plugin $out/share/waywallen/plugins"
+          '';
           meta =
             waywallen-daemon.meta
             // {
@@ -61,6 +66,11 @@
       waywallen = final.symlinkJoin {
         name = "waywallen-${final.waywallen-daemon.version}";
         paths = [final.waywallen-daemon final.waywallen-plugins final.waywallen-open-wallpaper-engine final.waywallen-ui];
+        nativeBuildInputs = [ final.makeWrapper ];
+        postBuild = ''
+          wrapProgram $out/bin/waywallen \
+            --add-flags "--ui $out/bin/waywallen-ui --plugin $out/share/waywallen/plugins"
+        '';
         meta = final.waywallen-daemon.meta // {
           description = "waywallen - daemon, renderer plugins, open-wallpaper-engine and UI";
         };
