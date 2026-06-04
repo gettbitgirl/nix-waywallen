@@ -13,7 +13,7 @@
   makeWrapper,
 }:
 rustPlatform.buildRustPackage {
-  pname = "waywallen-wlroots";
+  pname = "waywallen-layer-shell";
   version = "0.1.0";
 
   src = fetchFromGitHub {
@@ -51,7 +51,7 @@ rustPlatform.buildRustPackage {
   '';
 
   meta = with lib; {
-    description = "Wayland wlroots display backend for waywallen";
+    description = "Wayland layer-shell display backend for waywallen";
     homepage = "https://github.com/waywallen/waywallen";
     license = licenses.mit;
     platforms = platforms.linux;

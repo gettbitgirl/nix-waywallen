@@ -10,7 +10,7 @@
 , vulkan-loader
 }:
 
-stdenv.mkDerivation rec {
+stdenv.mkDerivation {
   pname = "waywallen-display-kde";
   version = "unstable-2026-05-30";
 
