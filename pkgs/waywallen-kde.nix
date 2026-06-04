@@ -42,6 +42,15 @@ stdenv.mkDerivation rec {
     "-DWAYWALLEN_DISPLAY_BUILD_EXAMPLES=OFF"
   ];
 
+  postInstall = ''
+    mkdir -p $out/share/plasma/wallpapers/org.waywallen.kde
+    cp -r ../extensions/kde/package/* $out/share/plasma/wallpapers/org.waywallen.kde/
+
+    mkdir -p $out/${qt6.qtbase.qtQmlPrefix}
+    mv $out/lib/qt6/qml/* $out/${qt6.qtbase.qtQmlPrefix}/
+    rm -rf $out/lib/qt6
+  '';
+
   meta = with lib; {
     description = "waywallen-display KDE (QML) plugin";
     homepage = "https://github.com/waywallen/waywallen-display";
