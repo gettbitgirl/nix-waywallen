@@ -6,14 +6,12 @@ This repository contains a Nix Flake that packages [Waywallen](https://github.co
 
 This flake exports the following packages:
 
-- **`waywallen-daemon`**: The core Rust daemon for Waywallen.
-- **`waywallen-ui`**: The Qt/QML graphical user interface.
-- **`waywallen-plugins`**: Renderer plugins (image, video) for Waywallen.
+- **`waywallen`**: The unified, combined package containing the Waywallen daemon, UI, renderer plugins (image, video), and the open wallpaper engine plugin. This is the primary package you should install.
 - **`waywallen-wlroots`**: The Wayland layer-shell display backend.
-- **`waywallen-open-wallpaper-engine`**: An open wallpaper engine plugin.
 - **`waywallen-kde`**: KDE Plasma plugin for the Waywallen display.
 - **`waywallen-gnome`**: GNOME Shell extension for the Waywallen display.
-- **`waywallen`**: A combined package that symlink-joins the daemon, renderer plugins, the open wallpaper engine plugin, and the UI into a single, easy-to-install package.
+
+*(Individual components like `waywallen-daemon`, `waywallen-ui`, and `waywallen-plugins` are also exported for advanced configurations, but most users only need the unified `waywallen` package).*
 
 ## Installation
 
