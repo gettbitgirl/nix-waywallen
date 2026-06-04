@@ -100,7 +100,7 @@ llvmPackages_latest.stdenv.mkDerivation rec {
     qt6.qtdeclarative
     qt6.qtgrpc
     protobuf
-    curl
+    (curl.override { websocketSupport = true; })
     ffmpeg
     asio
     libva
