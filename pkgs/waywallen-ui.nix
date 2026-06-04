@@ -121,9 +121,9 @@ llvmPackages_latest.stdenv.mkDerivation rec {
   ];
 
   qtWrapperArgs = [
-    "--prefix NIXPKGS_QT6_QML_IMPORT_PATH : $out/lib/qt6/qml"
-    "--prefix QML_IMPORT_PATH : $out/lib/qt6/qml"
-    "--prefix QML2_IMPORT_PATH : $out/lib/qt6/qml"
+    "--prefix NIXPKGS_QT6_QML_IMPORT_PATH : ${placeholder "out"}/lib/qt6/qml"
+    "--prefix QML_IMPORT_PATH : ${placeholder "out"}/lib/qt6/qml"
+    "--prefix QML2_IMPORT_PATH : ${placeholder "out"}/lib/qt6/qml"
   ];
 
   meta = with lib; {
