@@ -33,7 +33,13 @@
 , nss
 , pango
 , wayland
-, xorg
+, libx11
+, libxcomposite
+, libxdamage
+, libxext
+, libxfixes
+, libxrandr
+, libxcb
 , glslang         # provides glslangValidator for wavsen shader compilation
 , waywallen-plugins  # provides waywallen::bridge via CMake find_package
 }:
@@ -101,8 +107,8 @@ let
       buildInputs = [
         alsa-lib atk cairo cups dbus expat fontconfig glib gtk3 libdrm
         libxkbcommon mesa nspr nss pango wayland
-        xorg.libX11 xorg.libXcomposite xorg.libXdamage xorg.libXext
-        xorg.libXfixes xorg.libXrandr xorg.libxcb
+        libx11 libxcomposite libxdamage libxext
+        libxfixes libxrandr libxcb
       ];
       installPhase = ''
         mkdir -p $out
