@@ -149,13 +149,15 @@ endif()"
     # Inject classic locale to fix float parsing on localized systems
     substituteInPlace waywallen/scene_main.cpp \
       --replace-fail '#include <rstd/macro.hpp>' '#include <clocale>
+#include <locale>
 #include <rstd/macro.hpp>' \
-      --replace-fail 'int main(int argc, char** argv) {' 'int main(int argc, char** argv) { std::setlocale(LC_ALL, "C");'
+      --replace-fail 'int main(int argc, char** argv) {' 'int main(int argc, char** argv) { std::setlocale(LC_ALL, "C"); std::locale::global(std::locale("C"));'
 
     substituteInPlace waywallen/web_main.cpp \
       --replace-fail '#include "BrowserHost.hpp"' '#include <clocale>
+#include <locale>
 #include "BrowserHost.hpp"' \
-      --replace-fail 'int main(int argc, char** argv) {' 'int main(int argc, char** argv) { std::setlocale(LC_ALL, "C");'
+      --replace-fail 'int main(int argc, char** argv) {' 'int main(int argc, char** argv) { std::setlocale(LC_ALL, "C"); std::locale::global(std::locale("C"));'
   '';
 
   nativeBuildInputs = [
