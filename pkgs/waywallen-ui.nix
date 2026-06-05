@@ -1,6 +1,7 @@
 { lib
 , llvmPackages_latest
 , fetchFromGitHub
+, fetchgit
 , cmake
 , pkg-config
 , qt6
@@ -35,11 +36,11 @@ let
       rev = "d70d19e14437c2e1283e87e8bff43afe7c7e565d";
       sha256 = "sha256-vrMoY/UhP8zs/CpmUCp7N99Rf1ytcn7ehRaTY5MNoQs=";
     };
-    qml_material = fetchFromGitHub {
-      owner = "hypengw";
-      repo = "QmlMaterial";
+    qml_material = fetchgit {
+      url = "https://github.com/hypengw/QmlMaterial.git";
       rev = "e6d500030ef57cea5c3af9d6b96afa62c76439d4";
-      sha256 = "sha256-SGMRx5EA3DWCQLsaE8rK1OFsFVGsmlMFeYPb2xpa0i4=";
+      hash = "sha256-Webdr5fNxv6pnfKxulB/x9tMzoIBg/2DcC1RRlPpA8g=";
+      fetchLFS = true;
     };
     QExtra = fetchFromGitHub {
       owner = "hypengw";

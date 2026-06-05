@@ -10,6 +10,7 @@
 , libGL
 , libgbm
 , vulkan-loader
+, gjs
 }:
 
 stdenv.mkDerivation rec {
@@ -37,6 +38,7 @@ stdenv.mkDerivation rec {
     libGL
     libgbm
     vulkan-loader
+    gjs
   ];
 
   cmakeFlags = [
@@ -45,6 +47,16 @@ stdenv.mkDerivation rec {
     "-DWAYWALLEN_DISPLAY_BUILD_TESTS=OFF"
     "-DWAYWALLEN_DISPLAY_BUILD_EXAMPLES=OFF"
   ];
+
+  postInstall = ''
+    glib-compile-schemas $out/share/gnome-shell/extensions/org.waywallen.gnome@waywallen.io/schemas
+    ln -s $out/lib $out/share/gnome-shell/extensions/org.waywallen.gnome@waywallen.io/lib
+  '';
+
+  passthru = {
+    extensionUuid = "org.waywallen.gnome@waywallen.io";
+    extensionPortalSlug = "waywallen";
+  };
 
   meta = with lib; {
     description = "waywallen-display GNOME shell extension";
