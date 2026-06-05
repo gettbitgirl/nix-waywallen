@@ -210,6 +210,11 @@ endif()"
     rm -f $out/bin/weweb/libvk_swiftshader.so
     rm -f $out/bin/weweb/vk_swiftshader_icd.json
 
+    # Symlink system libraries so CEF can find them at the absolute paths it expects
+    ln -s ${libGL}/lib/libEGL.so $out/bin/weweb/libEGL.so
+    ln -s ${libGL}/lib/libGLESv2.so $out/bin/weweb/libGLESv2.so
+    ln -s ${vulkan-loader}/lib/libvulkan.so.1 $out/bin/weweb/libvulkan.so.1
+
     # Add RPATHs to libcef.so so it can locate Mesa, Vulkan loader, and Wayland
     patchelf --add-rpath "${lib.makeLibraryPath [ mesa vulkan-loader wayland libGL ]}" $out/bin/weweb/libcef.so
   '';
