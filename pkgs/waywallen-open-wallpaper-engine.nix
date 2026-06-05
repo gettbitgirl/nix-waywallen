@@ -42,6 +42,7 @@
 , libxcb
 , glslang         # provides glslangValidator for wavsen shader compilation
 , waywallen-plugins  # provides waywallen::bridge via CMake find_package
+, patchelf
 }:
 
 let
@@ -144,6 +145,17 @@ endif()"
   add_subdirectory(" \
       --replace-fail "EXCLUDE_FROM_ALL)" "EXCLUDE_FROM_ALL)
 endif()"
+
+    # Inject classic locale to fix float parsing on localized systems
+    substituteInPlace waywallen/scene_main.cpp \
+      --replace-fail '#include <rstd/macro.hpp>' '#include <clocale>
+#include <rstd/macro.hpp>' \
+      --replace-fail 'int main(int argc, char** argv) {' 'int main(int argc, char** argv) { std::setlocale(LC_ALL, "C");'
+
+    substituteInPlace waywallen/web_main.cpp \
+      --replace-fail '#include "BrowserHost.hpp"' '#include <clocale>
+#include "BrowserHost.hpp"' \
+      --replace-fail 'int main(int argc, char** argv) {' 'int main(int argc, char** argv) { std::setlocale(LC_ALL, "C");'
   '';
 
   nativeBuildInputs = [
@@ -153,6 +165,7 @@ endif()"
     glslang
     llvmPackages_latest.clang-tools
     llvmPackages_latest.lld
+    patchelf
   ];
 
   buildInputs = [
@@ -188,6 +201,18 @@ endif()"
     "-DFETCHDEPS_LOCAL_quickjs=${deps.quickjs}"
     "-DFETCHDEPS_LOCAL_cef=${deps.cef}"
   ];
+
+  postFixup = ''
+    # Remove CEF's unpatched bundled libraries from the installation output
+    rm -f $out/bin/weweb/libvulkan.so.1
+    rm -f $out/bin/weweb/libEGL.so
+    rm -f $out/bin/weweb/libGLESv2.so
+    rm -f $out/bin/weweb/libvk_swiftshader.so
+    rm -f $out/bin/weweb/vk_swiftshader_icd.json
+
+    # Add RPATHs to libcef.so so it can locate Mesa, Vulkan loader, and Wayland
+    patchelf --add-rpath "${lib.makeLibraryPath [ mesa vulkan-loader wayland libGL ]}" $out/bin/weweb/libcef.so
+  '';
 
   meta = with lib; {
     description = "Wallpaper Engine renderer plugin for waywallen (open-wallpaper-engine)";

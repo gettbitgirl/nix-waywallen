@@ -48,6 +48,11 @@ stdenv.mkDerivation rec {
     "-DWAYWALLEN_DISPLAY_BUILD_EXAMPLES=OFF"
   ];
 
+  postPatch = ''
+    substituteInPlace extensions/gnome/renderer/renderer.js \
+      --replace-fail "keepMinimized: true" "keepMinimized: false"
+  '';
+
   postInstall = ''
     glib-compile-schemas $out/share/gnome-shell/extensions/org.waywallen.gnome@waywallen.io/schemas
     ln -s $out/lib $out/share/gnome-shell/extensions/org.waywallen.gnome@waywallen.io/lib
