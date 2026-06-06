@@ -160,8 +160,7 @@ endif()"
       --replace-fail 'int main(int argc, char** argv) {' 'int main(int argc, char** argv) { std::setlocale(LC_ALL, "C"); std::locale::global(std::locale("C"));'
 
     substituteInPlace src/Web/AppHandler.cpp \
-      --replace-fail 'cmd->AppendSwitch("enable-accelerated-video-decode");' '// cmd->AppendSwitch("enable-accelerated-video-decode");' \
-      --replace-fail 'cmd->AppendSwitch("enable-native-gpu-memory-buffers");' '// cmd->AppendSwitch("enable-native-gpu-memory-buffers");'
+      --replace-fail 'cmd->AppendSwitchWithValue("ozone-platform", "wayland");' '// cmd->AppendSwitchWithValue("ozone-platform", "wayland");'
   '';
 
   nativeBuildInputs = [
