@@ -24,9 +24,7 @@ stdenv.mkDerivation rec {
     hash = "sha256-jb0lqror2kO1oF6HdFYjMeVzkGSuUj/MCYgP+Jbqkkg=";
   };
 
-  patches = [
-    ./patches/gnome-gjs-bigint.patch
-  ];
+
 
   nativeBuildInputs = [
     cmake
@@ -55,6 +53,8 @@ stdenv.mkDerivation rec {
   postPatch = ''
     substituteInPlace extensions/gnome/renderer/renderer.js \
       --replace-fail "keepMinimized: true" "keepMinimized: false"
+    substituteInPlace extensions/gnome/extension/windowState.js \
+      --replace-fail "w.title?.includes(APPLICATION_ID)" "w.title?.includes(APPLICATION_ID) || w.get_wm_class?.()?.includes(APPLICATION_ID) || this._launcher?.ownsWindow(w)"
   '';
 
   postInstall = ''

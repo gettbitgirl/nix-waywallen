@@ -51,6 +51,10 @@ llvmPackages_latest.stdenv.mkDerivation rec {
     #   - Remove the CPackConfig include (unneeded, may pull in cpack)
     substituteInPlace CMakeLists.txt \
       --replace "include(CPackConfig)" "# include(CPackConfig)"
+
+    # Patch bridge.c to send all plane fds for multi-planar modifiers:
+    substituteInPlace bridge/src/bridge.c \
+      --replace-fail "                  m, fds, m->count);" "                  m, fds, m->count * m->planes_per_buffer);"
   '';
 
   nativeBuildInputs = [
