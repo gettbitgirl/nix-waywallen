@@ -160,7 +160,9 @@ endif()"
       --replace-fail 'int main(int argc, char** argv) {' 'int main(int argc, char** argv) { std::setlocale(LC_ALL, "C"); std::locale::global(std::locale("C"));'
 
     substituteInPlace src/Web/AppHandler.cpp \
-      --replace-fail 'cmd->AppendSwitchWithValue("ozone-platform", "wayland");' '// cmd->AppendSwitchWithValue("ozone-platform", "wayland");'
+      --replace-fail 'cmd->AppendSwitch("enable-accelerated-video-decode");' '// cmd->AppendSwitch("enable-accelerated-video-decode");' \
+      --replace-fail 'cmd->AppendSwitch("enable-native-gpu-memory-buffers");' '// cmd->AppendSwitch("enable-native-gpu-memory-buffers");' \
+      --replace-fail 'cmd->AppendSwitch("enable-zero-copy");' '// cmd->AppendSwitch("enable-zero-copy");'
   '';
 
   nativeBuildInputs = [
@@ -208,16 +210,16 @@ endif()"
   ];
 
   postFixup = ''
-    # Remove CEF's unpatched bundled libraries from the installation output
+    # Remove CEF's unpatched Vulkan and SwiftShader stubs; keep ANGLE EGL/GLES.
+    # Do NOT remove libEGL.so or libGLESv2.so — those are CEF's bundled ANGLE
+    # implementation. Replacing them with system libglvnd causes EGL_BAD_ATTRIBUTE
+    # crashes on NVIDIA because NVIDIA's libEGL_nvidia.so doesn't support the
+    # ANGLE-specific context-virtualization attributes Chromium passes internally.
     rm -f $out/bin/weweb/libvulkan.so.1
-    rm -f $out/bin/weweb/libEGL.so
-    rm -f $out/bin/weweb/libGLESv2.so
     rm -f $out/bin/weweb/libvk_swiftshader.so
     rm -f $out/bin/weweb/vk_swiftshader_icd.json
 
-    # Symlink system libraries so CEF can find them at the absolute paths it expects
-    ln -s ${libGL}/lib/libEGL.so $out/bin/weweb/libEGL.so
-    ln -s ${libGL}/lib/libGLESv2.so $out/bin/weweb/libGLESv2.so
+    # Symlink system Vulkan loader (needed by libcef.so for Vulkan device probing)
     ln -s ${vulkan-loader}/lib/libvulkan.so.1 $out/bin/weweb/libvulkan.so.1
 
     # Add RPATHs to libcef.so so it can locate Mesa, Vulkan loader, and Wayland
