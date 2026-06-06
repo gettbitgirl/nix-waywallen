@@ -160,9 +160,8 @@ endif()"
       --replace-fail 'int main(int argc, char** argv) {' 'int main(int argc, char** argv) { std::setlocale(LC_ALL, "C"); std::locale::global(std::locale("C"));'
 
     substituteInPlace src/Web/AppHandler.cpp \
-      --replace-fail 'cmd->AppendSwitch("enable-zero-copy");' '// cmd->AppendSwitch("enable-zero-copy");' \
-      --replace-fail 'cmd->AppendSwitch("enable-native-gpu-memory-buffers");' '// cmd->AppendSwitch("enable-native-gpu-memory-buffers");' \
-      --replace-fail 'AcceleratedVideoDecodeLinuxZeroCopyGL,' ""
+      --replace-fail 'cmd->AppendSwitch("enable-accelerated-video-decode");' '// cmd->AppendSwitch("enable-accelerated-video-decode");' \
+      --replace-fail 'cmd->AppendSwitch("enable-native-gpu-memory-buffers");' '// cmd->AppendSwitch("enable-native-gpu-memory-buffers");'
   '';
 
   nativeBuildInputs = [
