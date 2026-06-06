@@ -1,19 +1,19 @@
-{ lib
-, stdenv
-, fetchFromGitHub
-, cmake
-, pkg-config
-, glib
-, gobject-introspection
-, gtk4
-, vulkan-headers
-, libGL
-, libgbm
-, vulkan-loader
-, gjs
+{
+  lib,
+  stdenv,
+  fetchFromGitHub,
+  cmake,
+  pkg-config,
+  glib,
+  gobject-introspection,
+  gtk4,
+  vulkan-headers,
+  libGL,
+  libgbm,
+  vulkan-loader,
+  gjs,
 }:
-
-stdenv.mkDerivation rec {
+stdenv.mkDerivation {
   pname = "waywallen-display-gnome";
   version = "unstable-2026-05-30";
 
@@ -23,8 +23,6 @@ stdenv.mkDerivation rec {
     rev = "6767dcf5a76c804c7dfd576310b1ed49fa769212";
     hash = "sha256-jb0lqror2kO1oF6HdFYjMeVzkGSuUj/MCYgP+Jbqkkg=";
   };
-
-
 
   nativeBuildInputs = [
     cmake
