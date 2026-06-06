@@ -24,6 +24,10 @@ stdenv.mkDerivation {
     hash = "sha256-jb0lqror2kO1oF6HdFYjMeVzkGSuUj/MCYgP+Jbqkkg=";
   };
 
+  patches = [
+    ./patches/gnome-gjs-bigint.patch
+  ];
+
   nativeBuildInputs = [
     cmake
     pkg-config
