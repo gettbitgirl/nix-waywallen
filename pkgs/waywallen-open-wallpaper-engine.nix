@@ -13,12 +13,13 @@
 , ffmpeg
 , vulkan-loader
 , vulkan-headers
-, libpulseaudio   # wavsen::audio backend
-, libva           # wavsen dep
+, libpulseaudio   # wavsen audio backend
+, libva           # wavsen VA-API dep
 , expat
-, libgbm          # wavsen dep (gbm.pc)
+, libgbm          # wavsen GBM dep (gbm.pc)
 , libGL
 , autoPatchelfHook
+# CEF runtime deps — autoPatchelfHook resolves libcef.so's NEEDED entries against these
 , alsa-lib
 , atk
 , cairo
@@ -40,12 +41,14 @@
 , libxfixes
 , libxrandr
 , libxcb
-, glslang         # provides glslangValidator for wavsen shader compilation
-, waywallen-plugins  # provides waywallen::bridge via CMake find_package
+, glslang         # provides glslangValidator for wavsen GLSL→SPIR-V compilation
+, waywallen-plugins  # provides waywallen::bridge headers/cmake config
 , patchelf
 }:
 
 let
+  # upstream uses CMake FetchContent for all these deps; we vendor them via
+  # FETCHDEPS_LOCAL_* so the build stays reproducible and network-free.
   deps = {
     rstd = fetchFromGitHub {
       owner = "hypengw";
@@ -97,6 +100,11 @@ let
       rev = "3c051980ab7e783dfbfb1c70c014ce5e05ecf24c";
       sha256 = "05k8niswh0ly5sx0129jdhiinqs84s86b7sv29ff68v3546dl04i";
     };
+
+    # CEF (Chromium Embedded Framework) prebuilt minimal distribution.
+    # autoPatchelfHook rewrites ELF interpreter paths and resolves NEEDED entries
+    # against the buildInputs so libcef.so can find its system dependencies.
+    # The minimal build includes ANGLE (libEGL.so, libGLESv2.so) — see postFixup.
     cef = stdenv.mkDerivation {
       pname = "cef-minimal";
       version = "147.0.10";
@@ -129,9 +137,16 @@ llvmPackages_latest.stdenv.mkDerivation {
     sha256 = "18ya8xlj6w54hjwafva5jsqm5bjr0a84fiyjicz3s4br67fdgacf";
   };
 
+  # wavsen and rstd are compiled as static libs without glibc FORTIFY_SOURCE
+  # pass_object_size annotations. With FORTIFY enabled, glibc replaces read/pread/open
+  # with annotated variants whose signatures don't match, causing link failures.
   hardeningDisable = [ "fortify" ];
 
   postPatch = ''
+    # upstream's third_party/CMakeLists.txt unconditionally calls add_library(eigen ...)
+    # and add_library(Eigen3::Eigen ALIAS eigen). When eigen is supplied via
+    # FETCHDEPS_LOCAL_eigen, CMake has already defined those targets, so the
+    # unconditional declarations produce a "target already exists" error. Guard them.
     substituteInPlace third_party/CMakeLists.txt \
       --replace-fail "add_library(eigen INTERFACE)" "if(NOT TARGET eigen)
   add_library(eigen INTERFACE)
@@ -140,13 +155,20 @@ endif()" \
   add_library(Eigen3::Eigen ALIAS eigen)
 endif()"
 
+    # cmake/CEF.cmake calls add_subdirectory() on the CEF wrapper unconditionally.
+    # When CEF is supplied via FETCHDEPS_LOCAL_cef the wrapper target already exists,
+    # so a second add_subdirectory produces a duplicate-target error. Guard it.
     substituteInPlace cmake/CEF.cmake \
       --replace-fail "add_subdirectory(" "if(NOT TARGET libcef_dll_wrapper)
   add_subdirectory(" \
       --replace-fail "EXCLUDE_FROM_ALL)" "EXCLUDE_FROM_ALL)
 endif()"
 
-    # Inject classic locale to fix float parsing on localized systems
+    # NixOS environments often have a system locale set (e.g. de_DE, fr_FR) which
+    # causes strtod/sscanf to use ',' as the decimal separator. Upstream parses
+    # floating-point values from wallpaper JSON/asset files using the default locale,
+    # which silently misparses numbers on non-C locales. Force the C locale at
+    # startup in both the scene renderer and the weweb renderer entry points.
     substituteInPlace waywallen/scene_main.cpp \
       --replace-fail '#include <rstd/macro.hpp>' '#include <clocale>
 #include <locale>
@@ -159,6 +181,18 @@ endif()"
 #include "BrowserHost.hpp"' \
       --replace-fail 'int main(int argc, char** argv) {' 'int main(int argc, char** argv) { std::setlocale(LC_ALL, "C"); std::locale::global(std::locale("C"));'
 
+    # Upstream enables three Chromium flags intended for ChromeOS that are broken
+    # on desktop Linux:
+    #
+    #   enable-accelerated-video-decode — requires a VA-API/V4L2 decode pipeline
+    #     that is not reliably available outside ChromeOS; causes GPU process crashes.
+    #
+    #   enable-native-gpu-memory-buffers — enables Linux GBM-backed GpuMemoryBuffers.
+    #     Chromium's GMB Linux support is ChromeOS-only; on desktop it causes the GPU
+    #     process to SIGSEGV during GmbVideoFramePoolContext::InitializeOnGpu.
+    #
+    #   enable-zero-copy — zero-copy texture upload via GpuMemoryBuffer. Depends on
+    #     native-gpu-memory-buffers being functional; must be disabled together.
     substituteInPlace src/Web/AppHandler.cpp \
       --replace-fail 'cmd->AppendSwitch("enable-accelerated-video-decode");' '// cmd->AppendSwitch("enable-accelerated-video-decode");' \
       --replace-fail 'cmd->AppendSwitch("enable-native-gpu-memory-buffers");' '// cmd->AppendSwitch("enable-native-gpu-memory-buffers");' \
@@ -169,10 +203,10 @@ endif()"
     cmake
     pkg-config
     ninja
-    glslang
-    llvmPackages_latest.clang-tools
-    llvmPackages_latest.lld
-    patchelf
+    glslang                            # glslangValidator for wavsen shader compilation
+    llvmPackages_latest.clang-tools    # clang-scan-deps for C++20 module scanning
+    llvmPackages_latest.lld            # faster linker; required by upstream CMake config
+    patchelf                           # used in postFixup to patch libcef.so RPATH
   ];
 
   buildInputs = [
@@ -182,22 +216,25 @@ endif()"
     ffmpeg
     vulkan-loader
     vulkan-headers
-    libpulseaudio
-    libva
-    libgbm
-    libGL
+    libpulseaudio   # wavsen audio backend
+    libva           # wavsen VA-API dep
+    libgbm          # wavsen GBM dep
+    libGL           # also used in postFixup RPATH for libcef.so
     expat
     waywallen-plugins
   ];
 
   cmakeFlags = [
-    "-DBUILD_WEWEB=ON"
-    "-DBUILD_WESCENE=ON"
-    "-DBUILD_VIEWER=OFF"
+    "-DBUILD_WEWEB=ON"       # CEF-based web wallpaper renderer
+    "-DBUILD_WESCENE=ON"     # scene (particle/shader) wallpaper renderer
+    "-DBUILD_VIEWER=OFF"     # standalone viewer binary; not needed for daemon use
     "-DBUILD_TESTS=OFF"
     "-DBUILD_WAYWALLEN=ON"
+    # Point CMake's clang module scanner at the Nix-store clang-tools binary
     "-DCMAKE_CXX_COMPILER_CLANG_SCAN_DEPS=${llvmPackages_latest.clang-tools}/bin/clang-scan-deps"
+    # Provide the waywallen IPC bridge cmake config from the plugins package
     "-Dwaywallen-bridge_DIR=${waywallen-plugins}/lib/cmake/waywallen-bridge"
+    # Redirect all FetchContent calls to pre-fetched Nix store paths
     "-DFETCHDEPS_LOCAL_rstd=${deps.rstd}"
     "-DFETCHDEPS_LOCAL_wavsen=${deps.wavsen}"
     "-DFETCHDEPS_LOCAL_eigen=${deps.eigen}"
@@ -210,19 +247,25 @@ endif()"
   ];
 
   postFixup = ''
-    # Remove CEF's unpatched Vulkan and SwiftShader stubs; keep ANGLE EGL/GLES.
-    # Do NOT remove libEGL.so or libGLESv2.so — those are CEF's bundled ANGLE
-    # implementation. Replacing them with system libglvnd causes EGL_BAD_ATTRIBUTE
-    # crashes on NVIDIA because NVIDIA's libEGL_nvidia.so doesn't support the
-    # ANGLE-specific context-virtualization attributes Chromium passes internally.
+    # CEF's minimal tarball ships libvulkan.so.1 and a SwiftShader software Vulkan
+    # implementation (libvk_swiftshader.so + vk_swiftshader_icd.json). These are
+    # unpatched upstream binaries with hardcoded non-Nix paths that will fail to
+    # load. Remove them and replace libvulkan.so.1 with the system loader.
     rm -f $out/bin/weweb/libvulkan.so.1
     rm -f $out/bin/weweb/libvk_swiftshader.so
     rm -f $out/bin/weweb/vk_swiftshader_icd.json
 
-    # Symlink system Vulkan loader (needed by libcef.so for Vulkan device probing)
+    # libcef.so probes for Vulkan at runtime. Point it at the system vulkan-loader
+    # which knows how to find ICD manifests via XDG/system paths.
     ln -s ${vulkan-loader}/lib/libvulkan.so.1 $out/bin/weweb/libvulkan.so.1
 
-    # Add RPATHs to libcef.so so it can locate Mesa, Vulkan loader, and Wayland
+    # libcef.so is a prebuilt binary with no RPATH for Mesa, Vulkan, or Wayland.
+    # Without these paths it cannot dlopen its GL/EGL/Wayland dependencies at runtime.
+    # NOTE: do NOT replace the CEF-bundled libEGL.so or libGLESv2.so. Those are
+    # ANGLE's own EGL/GLES implementation. Swapping them for the system libglvnd
+    # causes EGL_BAD_ATTRIBUTE crashes on NVIDIA: NVIDIA's libEGL_nvidia.so does not
+    # implement the ANGLE-specific context-virtualization EGL attributes that Chromium
+    # passes when creating shared GPU contexts.
     patchelf --add-rpath "${lib.makeLibraryPath [ mesa vulkan-loader wayland libGL ]}" $out/bin/weweb/libcef.so
   '';
 
