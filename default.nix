@@ -6,11 +6,19 @@
     let
       node = lock.nodes.${nodeName}.locked;
     in
-      pkgs.fetchgit {
-        url = node.url;
-        rev = node.rev;
-        hash = node.narHash;
-      };
+      if node.type or "" == "github" then
+        pkgs.fetchFromGitHub {
+          owner = node.owner;
+          repo = node.repo;
+          rev = node.rev;
+          hash = node.narHash;
+        }
+      else
+        pkgs.fetchgit {
+          url = node.url;
+          rev = node.rev;
+          hash = node.narHash;
+        };
 
   waywallen-src = fetchInput "waywallen-src";
   waywallen-display-src = fetchInput "waywallen-display-src";
