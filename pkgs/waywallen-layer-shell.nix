@@ -35,10 +35,8 @@ rustPlatform.buildRustPackage {
     vulkan-loader  # provides vulkan.pc for build.rs
   ];
 
-  # Build only the layer-shell binary. Disable egl/vulkan features so
-  # build.rs does not probe for those C libraries (they are irrelevant for
-  # the pure-Rust layer-shell client binary).
-  cargoBuildFlags = [ "--no-default-features" "--features" "layer-shell" "--bin" "waywallen-layer-shell" ];
+  # Build only the layer-shell binary with Vulkan support enabled for the dmabuf relay.
+  cargoBuildFlags = [ "--no-default-features" "--features" "vulkan,layer-shell" "--bin" "waywallen-layer-shell" ];
   doCheck = false;
 
   postInstall = ''
