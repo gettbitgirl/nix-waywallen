@@ -41,7 +41,7 @@ rustPlatform.buildRustPackage {
 
   postInstall = ''
     wrapProgram $out/bin/waywallen-layer-shell \
-      --prefix LD_LIBRARY_PATH : ${lib.makeLibraryPath [ wayland ]}
+      --prefix LD_LIBRARY_PATH : ${lib.makeLibraryPath [ wayland vulkan-loader ]}
   '';
 
   meta = with lib; {
