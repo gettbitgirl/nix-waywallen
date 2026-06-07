@@ -85,7 +85,7 @@ in rec {
     nativeBuildInputs = [pkgs.makeWrapper];
     postBuild = ''
       wrapProgram $out/bin/waywallen \
-        --add-flags "--ui $out/bin/waywallen-ui --plugin $out/share/waywallen"
+        --add-flags "--ui $out/bin/waywallen-ui --plugin /run/current-system/sw/share/waywallen/plugins"
     '';
   };
 }
