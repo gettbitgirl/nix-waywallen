@@ -13,7 +13,7 @@
   makeWrapper,
 }:
 rustPlatform.buildRustPackage {
-  pname = "waywallen-display-layer-shell";
+  pname = "waywallen-layer-shell";
   version = "0.1.0";
 
   src = fetchFromGitHub {
