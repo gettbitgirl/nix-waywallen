@@ -1,7 +1,6 @@
 {
   lib,
   stdenv,
-  fetchFromGitHub,
   cmake,
   pkg-config,
   glib,
@@ -12,17 +11,13 @@
   libgbm,
   vulkan-loader,
   gjs,
+  src,
 }:
 stdenv.mkDerivation {
   pname = "waywallen-display-gnome";
   version = "unstable-2026-05-30";
 
-  src = fetchFromGitHub {
-    owner = "waywallen";
-    repo = "waywallen-display";
-    rev = "6767dcf5a76c804c7dfd576310b1ed49fa769212";
-    hash = "sha256-jb0lqror2kO1oF6HdFYjMeVzkGSuUj/MCYgP+Jbqkkg=";
-  };
+  inherit src;
 
   patches = [
     # GJS (the GNOME JavaScript engine) represents uint64 values as JavaScript

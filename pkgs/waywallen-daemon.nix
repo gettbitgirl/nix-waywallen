@@ -1,6 +1,5 @@
 { lib
 , rustPlatform
-, fetchFromGitHub
 , pkg-config
 , protobuf
 , sqlite
@@ -10,18 +9,14 @@
 , libgbm
 , libxkbcommon
 , makeWrapper
+, src
 }:
 
 rustPlatform.buildRustPackage rec {
   pname = "waywallen-daemon";
   version = "0.1.8";
 
-  src = fetchFromGitHub {
-    owner = "waywallen";
-    repo = "waywallen";
-    rev = "v${version}";
-    sha256 = "0368i58ynv3r61yi16vm78r4qmr93jwc779hzrd72csj6pv9kibl";
-  };
+  inherit src;
 
   cargoHash = "sha256-1GrQPRVQCheI7YOjMi8iDE4nTrq423+THUd16Eb6A1M=";
 

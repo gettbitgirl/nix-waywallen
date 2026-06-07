@@ -1,6 +1,5 @@
 { lib
 , stdenv
-, fetchFromGitHub
 , cmake
 , pkg-config
 , qt6
@@ -8,18 +7,14 @@
 , libGL
 , libgbm
 , vulkan-loader
+, src
 }:
 
 stdenv.mkDerivation {
   pname = "waywallen-display-kde";
   version = "unstable-2026-05-30";
 
-  src = fetchFromGitHub {
-    owner = "waywallen";
-    repo = "waywallen-display";
-    rev = "6767dcf5a76c804c7dfd576310b1ed49fa769212";
-    hash = "sha256-jb0lqror2kO1oF6HdFYjMeVzkGSuUj/MCYgP+Jbqkkg=";
-  };
+  inherit src;
 
   nativeBuildInputs = [
     cmake

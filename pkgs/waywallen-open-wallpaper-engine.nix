@@ -44,6 +44,7 @@
 , glslang         # provides glslangValidator for wavsen GLSL→SPIR-V compilation
 , waywallen-plugins  # provides waywallen::bridge headers/cmake config
 , patchelf
+, src
 }:
 
 let
@@ -130,12 +131,7 @@ llvmPackages_latest.stdenv.mkDerivation {
   pname = "waywallen-open-wallpaper-engine";
   version = "0.1.4";
 
-  src = fetchFromGitHub {
-    owner = "waywallen";
-    repo = "open-wallpaper-engine";
-    rev = "f2bb8d800208603c6febc464779b7853ff6c0f52";
-    sha256 = "18ya8xlj6w54hjwafva5jsqm5bjr0a84fiyjicz3s4br67fdgacf";
-  };
+  inherit src;
 
   # wavsen and rstd are compiled as static libs without glibc FORTIFY_SOURCE
   # pass_object_size annotations. With FORTIFY enabled, glibc replaces read/pread/open
