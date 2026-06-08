@@ -1,53 +1,52 @@
-{ lib
-, stdenv
-, llvmPackages_latest
-, fetchFromGitHub
-, fetchFromGitLab
-, fetchzip
-, cmake
-, pkg-config
-, ninja
-, freetype
-, lz4
-, fontconfig
-, ffmpeg
-, vulkan-loader
-, vulkan-headers
-, libpulseaudio   # wavsen audio backend
-, libva           # wavsen VA-API dep
-, expat
-, libgbm          # wavsen GBM dep (gbm.pc)
-, libGL
-, autoPatchelfHook
-# CEF runtime deps — autoPatchelfHook resolves libcef.so's NEEDED entries against these
-, alsa-lib
-, atk
-, cairo
-, cups
-, dbus
-, glib
-, gtk3
-, libdrm
-, libxkbcommon
-, mesa
-, nspr
-, nss
-, pango
-, wayland
-, libx11
-, libxcomposite
-, libxdamage
-, libxext
-, libxfixes
-, libxrandr
-, libxcb
-, glslang         # provides glslangValidator for wavsen GLSL→SPIR-V compilation
-, waywallen-plugins  # provides waywallen::bridge headers/cmake config
-, patchelf
-, src
-}:
-
-let
+{
+  lib,
+  stdenv,
+  llvmPackages_latest,
+  fetchFromGitHub,
+  fetchFromGitLab,
+  fetchzip,
+  cmake,
+  pkg-config,
+  ninja,
+  freetype,
+  lz4,
+  fontconfig,
+  ffmpeg,
+  vulkan-loader,
+  vulkan-headers,
+  libpulseaudio, # wavsen audio backend
+  libva, # wavsen VA-API dep
+  expat,
+  libgbm, # wavsen GBM dep (gbm.pc)
+  libGL,
+  autoPatchelfHook,
+  # CEF runtime deps — autoPatchelfHook resolves libcef.so's NEEDED entries against these
+  alsa-lib,
+  atk,
+  cairo,
+  cups,
+  dbus,
+  glib,
+  gtk3,
+  libdrm,
+  libxkbcommon,
+  mesa,
+  nspr,
+  nss,
+  pango,
+  wayland,
+  libx11,
+  libxcomposite,
+  libxdamage,
+  libxext,
+  libxfixes,
+  libxrandr,
+  libxcb,
+  glslang, # provides glslangValidator for wavsen GLSL→SPIR-V compilation
+  waywallen-plugins, # provides waywallen::bridge headers/cmake config
+  patchelf,
+  src,
+}: let
   # upstream uses CMake FetchContent for all these deps; we vendor them via
   # FETCHDEPS_LOCAL_* so the build stays reproducible and network-free.
   deps = {
@@ -113,12 +112,31 @@ let
         url = "https://cef-builds.spotifycdn.com/cef_binary_147.0.10%2Bgd58e84d%2Bchromium-147.0.7727.118_linux64_minimal.tar.bz2";
         sha256 = "sha256-Da6weC6xDs6F2QUmARLiF8YIbWG7p+tGt1FRFpEZf1Q=";
       };
-      nativeBuildInputs = [ autoPatchelfHook ];
+      nativeBuildInputs = [autoPatchelfHook];
       buildInputs = [
-        alsa-lib atk cairo cups dbus expat fontconfig glib gtk3 libdrm
-        libxkbcommon mesa nspr nss pango wayland
-        libx11 libxcomposite libxdamage libxext
-        libxfixes libxrandr libxcb
+        alsa-lib
+        atk
+        cairo
+        cups
+        dbus
+        expat
+        fontconfig
+        glib
+        gtk3
+        libdrm
+        libxkbcommon
+        mesa
+        nspr
+        nss
+        pango
+        wayland
+        libx11
+        libxcomposite
+        libxdamage
+        libxext
+        libxfixes
+        libxrandr
+        libxcb
       ];
       installPhase = ''
         mkdir -p $out
@@ -127,148 +145,153 @@ let
     };
   };
 in
-llvmPackages_latest.stdenv.mkDerivation {
-  pname = "waywallen-open-wallpaper-engine";
-  version = "0.1.4";
+  llvmPackages_latest.stdenv.mkDerivation {
+    pname = "waywallen-open-wallpaper-engine";
+    version = "0.1.4";
 
-  inherit src;
+    inherit src;
 
-  # wavsen and rstd are compiled as static libs without glibc FORTIFY_SOURCE
-  # pass_object_size annotations. With FORTIFY enabled, glibc replaces read/pread/open
-  # with annotated variants whose signatures don't match, causing link failures.
-  hardeningDisable = [ "fortify" ];
+    # wavsen and rstd are compiled as static libs without glibc FORTIFY_SOURCE
+    # pass_object_size annotations. With FORTIFY enabled, glibc replaces read/pread/open
+    # with annotated variants whose signatures don't match, causing link failures.
+    hardeningDisable = ["fortify"];
 
-  postPatch = ''
-    # upstream's third_party/CMakeLists.txt unconditionally calls add_library(eigen ...)
-    # and add_library(Eigen3::Eigen ALIAS eigen). When eigen is supplied via
-    # FETCHDEPS_LOCAL_eigen, CMake has already defined those targets, so the
-    # unconditional declarations produce a "target already exists" error. Guard them.
-    substituteInPlace third_party/CMakeLists.txt \
-      --replace-fail "add_library(eigen INTERFACE)" "if(NOT TARGET eigen)
-  add_library(eigen INTERFACE)
-endif()" \
-      --replace-fail "add_library(Eigen3::Eigen ALIAS eigen)" "if(NOT TARGET Eigen3::Eigen)
-  add_library(Eigen3::Eigen ALIAS eigen)
-endif()"
+    postPatch = ''
+          # upstream's third_party/CMakeLists.txt unconditionally calls add_library(eigen ...)
+          # and add_library(Eigen3::Eigen ALIAS eigen). When eigen is supplied via
+          # FETCHDEPS_LOCAL_eigen, CMake has already defined those targets, so the
+          # unconditional declarations produce a "target already exists" error. Guard them.
+          substituteInPlace third_party/CMakeLists.txt \
+            --replace-fail "add_library(eigen INTERFACE)" "if(NOT TARGET eigen)
+        add_library(eigen INTERFACE)
+      endif()" \
+            --replace-fail "add_library(Eigen3::Eigen ALIAS eigen)" "if(NOT TARGET Eigen3::Eigen)
+        add_library(Eigen3::Eigen ALIAS eigen)
+      endif()"
 
-    # cmake/CEF.cmake calls add_subdirectory() on the CEF wrapper unconditionally.
-    # When CEF is supplied via FETCHDEPS_LOCAL_cef the wrapper target already exists,
-    # so a second add_subdirectory produces a duplicate-target error. Guard it.
-    substituteInPlace cmake/CEF.cmake \
-      --replace-fail "add_subdirectory(" "if(NOT TARGET libcef_dll_wrapper)
-  add_subdirectory(" \
-      --replace-fail "EXCLUDE_FROM_ALL)" "EXCLUDE_FROM_ALL)
-endif()"
+          # cmake/CEF.cmake calls add_subdirectory() on the CEF wrapper unconditionally.
+          # When CEF is supplied via FETCHDEPS_LOCAL_cef the wrapper target already exists,
+          # so a second add_subdirectory produces a duplicate-target error. Guard it.
+          substituteInPlace cmake/CEF.cmake \
+            --replace-fail "add_subdirectory(" "if(NOT TARGET libcef_dll_wrapper)
+        add_subdirectory(" \
+            --replace-fail "EXCLUDE_FROM_ALL)" "EXCLUDE_FROM_ALL)
+      endif()"
 
-    # NixOS environments often have a system locale set (e.g. de_DE, fr_FR) which
-    # causes strtod/sscanf to use ',' as the decimal separator. Upstream parses
-    # floating-point values from wallpaper JSON/asset files using the default locale,
-    # which silently misparses numbers on non-C locales. Force the C locale at
-    # startup in both the scene renderer and the weweb renderer entry points.
-    substituteInPlace waywallen/scene_main.cpp \
-      --replace-fail '#include <rstd/macro.hpp>' '#include <clocale>
-#include <locale>
-#include <rstd/macro.hpp>' \
-      --replace-fail 'int main(int argc, char** argv) {' 'int main(int argc, char** argv) { std::setlocale(LC_ALL, "C"); std::locale::global(std::locale("C"));'
+          # NixOS environments often have a system locale set (e.g. de_DE, fr_FR) which
+          # causes strtod/sscanf to use ',' as the decimal separator. Upstream parses
+          # floating-point values from wallpaper JSON/asset files using the default locale,
+          # which silently misparses numbers on non-C locales. Force the C locale at
+          # startup in both the scene renderer and the weweb renderer entry points.
+          substituteInPlace waywallen/scene_main.cpp \
+            --replace-fail '#include <rstd/macro.hpp>' '#include <clocale>
+      #include <locale>
+      #include <rstd/macro.hpp>' \
+            --replace-fail 'int main(int argc, char** argv) {' 'int main(int argc, char** argv) { std::setlocale(LC_ALL, "C"); std::locale::global(std::locale("C"));'
 
-    substituteInPlace waywallen/web_main.cpp \
-      --replace-fail '#include "BrowserHost.hpp"' '#include <clocale>
-#include <locale>
-#include "BrowserHost.hpp"' \
-      --replace-fail 'int main(int argc, char** argv) {' 'int main(int argc, char** argv) { std::setlocale(LC_ALL, "C"); std::locale::global(std::locale("C"));'
+          substituteInPlace waywallen/web_main.cpp \
+            --replace-fail '#include "BrowserHost.hpp"' '#include <clocale>
+      #include <locale>
+      #include "BrowserHost.hpp"' \
+            --replace-fail 'int main(int argc, char** argv) {' 'int main(int argc, char** argv) { std::setlocale(LC_ALL, "C"); std::locale::global(std::locale("C"));'
 
-    # Upstream enables three Chromium flags intended for ChromeOS that are broken
-    # on desktop Linux:
-    #
-    #   enable-accelerated-video-decode — requires a VA-API/V4L2 decode pipeline
-    #     that is not reliably available outside ChromeOS; causes GPU process crashes.
-    #
-    #   enable-native-gpu-memory-buffers — enables Linux GBM-backed GpuMemoryBuffers.
-    #     Chromium's GMB Linux support is ChromeOS-only; on desktop it causes the GPU
-    #     process to SIGSEGV during GmbVideoFramePoolContext::InitializeOnGpu.
-    #
-    #   enable-zero-copy — zero-copy texture upload via GpuMemoryBuffer. Depends on
-    #     native-gpu-memory-buffers being functional; must be disabled together.
-    substituteInPlace src/Web/AppHandler.cpp \
-      --replace-fail 'cmd->AppendSwitch("enable-accelerated-video-decode");' '// cmd->AppendSwitch("enable-accelerated-video-decode");' \
-      --replace-fail 'cmd->AppendSwitch("enable-native-gpu-memory-buffers");' '// cmd->AppendSwitch("enable-native-gpu-memory-buffers");' \
-      --replace-fail 'cmd->AppendSwitch("enable-zero-copy");' '// cmd->AppendSwitch("enable-zero-copy");'
-  '';
+          # Upstream enables three Chromium flags intended for ChromeOS that are broken
+          # on desktop Linux:
+          #
+          #   enable-accelerated-video-decode — requires a VA-API/V4L2 decode pipeline
+          #     that is not reliably available outside ChromeOS; causes GPU process crashes.
+          #
+          #   enable-native-gpu-memory-buffers — enables Linux GBM-backed GpuMemoryBuffers.
+          #     Chromium's GMB Linux support is ChromeOS-only; on desktop it causes the GPU
+          #     process to SIGSEGV during GmbVideoFramePoolContext::InitializeOnGpu.
+          #
+          #   enable-zero-copy — zero-copy texture upload via GpuMemoryBuffer. Depends on
+          #     native-gpu-memory-buffers being functional; must be disabled together.
+          substituteInPlace src/Web/AppHandler.cpp \
+            --replace-fail 'cmd->AppendSwitch("enable-accelerated-video-decode");' '// cmd->AppendSwitch("enable-accelerated-video-decode");' \
+            --replace-fail 'cmd->AppendSwitch("enable-native-gpu-memory-buffers");' '// cmd->AppendSwitch("enable-native-gpu-memory-buffers");' \
+            --replace-fail 'cmd->AppendSwitch("enable-zero-copy");' '// cmd->AppendSwitch("enable-zero-copy");'
+    '';
 
-  nativeBuildInputs = [
-    cmake
-    pkg-config
-    ninja
-    glslang                            # glslangValidator for wavsen shader compilation
-    llvmPackages_latest.clang-tools    # clang-scan-deps for C++20 module scanning
-    llvmPackages_latest.lld            # faster linker; required by upstream CMake config
-    patchelf                           # used in postFixup to patch libcef.so RPATH
-  ];
+    nativeBuildInputs = [
+      cmake
+      pkg-config
+      ninja
+      glslang # glslangValidator for wavsen shader compilation
+      llvmPackages_latest.clang-tools # clang-scan-deps for C++20 module scanning
+      llvmPackages_latest.lld # faster linker; required by upstream CMake config
+      patchelf # used in postFixup to patch libcef.so RPATH
+    ];
 
-  buildInputs = [
-    freetype
-    lz4
-    fontconfig
-    ffmpeg
-    vulkan-loader
-    vulkan-headers
-    libpulseaudio   # wavsen audio backend
-    libva           # wavsen VA-API dep
-    libgbm          # wavsen GBM dep
-    libGL           # also used in postFixup RPATH for libcef.so
-    expat
-    waywallen-plugins
-  ];
+    buildInputs = [
+      freetype
+      lz4
+      fontconfig
+      ffmpeg
+      vulkan-loader
+      vulkan-headers
+      libpulseaudio # wavsen audio backend
+      libva # wavsen VA-API dep
+      libgbm # wavsen GBM dep
+      libGL # also used in postFixup RPATH for libcef.so
+      expat
+      waywallen-plugins
+    ];
 
-  cmakeFlags = [
-    "-DBUILD_WEWEB=ON"       # CEF-based web wallpaper renderer
-    "-DBUILD_WESCENE=ON"     # scene (particle/shader) wallpaper renderer
-    "-DBUILD_VIEWER=OFF"     # standalone viewer binary; not needed for daemon use
-    "-DBUILD_TESTS=OFF"
-    "-DBUILD_WAYWALLEN=ON"
-    # Point CMake's clang module scanner at the Nix-store clang-tools binary
-    "-DCMAKE_CXX_COMPILER_CLANG_SCAN_DEPS=${llvmPackages_latest.clang-tools}/bin/clang-scan-deps"
-    # Provide the waywallen IPC bridge cmake config from the plugins package
-    "-Dwaywallen-bridge_DIR=${waywallen-plugins}/lib/cmake/waywallen-bridge"
-    # Redirect all FetchContent calls to pre-fetched Nix store paths
-    "-DFETCHDEPS_LOCAL_rstd=${deps.rstd}"
-    "-DFETCHDEPS_LOCAL_wavsen=${deps.wavsen}"
-    "-DFETCHDEPS_LOCAL_eigen=${deps.eigen}"
-    "-DFETCHDEPS_LOCAL_nlohmann_json=${deps.nlohmann_json}"
-    "-DFETCHDEPS_LOCAL_spirv_reflect=${deps.spirv_reflect}"
-    "-DFETCHDEPS_LOCAL_glslang=${deps.glslang_src}"
-    "-DFETCHDEPS_LOCAL_argparse=${deps.argparse}"
-    "-DFETCHDEPS_LOCAL_quickjs=${deps.quickjs}"
-    "-DFETCHDEPS_LOCAL_cef=${deps.cef}"
-  ];
+    cmakeFlags = [
+      "-DBUILD_WEWEB=ON" # CEF-based web wallpaper renderer
+      "-DBUILD_WESCENE=ON" # scene (particle/shader) wallpaper renderer
+      "-DBUILD_VIEWER=OFF" # standalone viewer binary; not needed for daemon use
+      "-DBUILD_TESTS=OFF"
+      "-DBUILD_WAYWALLEN=ON"
+      # Point CMake's clang module scanner at the Nix-store clang-tools binary
+      "-DCMAKE_CXX_COMPILER_CLANG_SCAN_DEPS=${llvmPackages_latest.clang-tools}/bin/clang-scan-deps"
+      # Provide the waywallen IPC bridge cmake config from the plugins package
+      "-Dwaywallen-bridge_DIR=${waywallen-plugins}/lib/cmake/waywallen-bridge"
+      # Redirect all FetchContent calls to pre-fetched Nix store paths
+      "-DFETCHDEPS_LOCAL_rstd=${deps.rstd}"
+      "-DFETCHDEPS_LOCAL_wavsen=${deps.wavsen}"
+      "-DFETCHDEPS_LOCAL_eigen=${deps.eigen}"
+      "-DFETCHDEPS_LOCAL_nlohmann_json=${deps.nlohmann_json}"
+      "-DFETCHDEPS_LOCAL_spirv_reflect=${deps.spirv_reflect}"
+      "-DFETCHDEPS_LOCAL_glslang=${deps.glslang_src}"
+      "-DFETCHDEPS_LOCAL_argparse=${deps.argparse}"
+      "-DFETCHDEPS_LOCAL_quickjs=${deps.quickjs}"
+      "-DFETCHDEPS_LOCAL_cef=${deps.cef}"
+    ];
 
-  postFixup = ''
-    # CEF's minimal tarball ships libvulkan.so.1 and a SwiftShader software Vulkan
-    # implementation (libvk_swiftshader.so + vk_swiftshader_icd.json). These are
-    # unpatched upstream binaries with hardcoded non-Nix paths that will fail to
-    # load. Remove them and replace libvulkan.so.1 with the system loader.
-    rm -f $out/bin/weweb/libvulkan.so.1
-    rm -f $out/bin/weweb/libvk_swiftshader.so
-    rm -f $out/bin/weweb/vk_swiftshader_icd.json
+    postFixup = ''
+      # CEF's minimal tarball ships libvulkan.so.1 and a SwiftShader software Vulkan
+      # implementation (libvk_swiftshader.so + vk_swiftshader_icd.json). These are
+      # unpatched upstream binaries with hardcoded non-Nix paths that will fail to
+      # load. Remove them and replace libvulkan.so.1 with the system loader.
+      rm -f $out/bin/weweb/libvulkan.so.1
+      rm -f $out/bin/weweb/libvk_swiftshader.so
+      rm -f $out/bin/weweb/vk_swiftshader_icd.json
 
-    # libcef.so probes for Vulkan at runtime. Point it at the system vulkan-loader
-    # which knows how to find ICD manifests via XDG/system paths.
-    ln -s ${vulkan-loader}/lib/libvulkan.so.1 $out/bin/weweb/libvulkan.so.1
+      # libcef.so probes for Vulkan at runtime. Point it at the system vulkan-loader
+      # which knows how to find ICD manifests via XDG/system paths.
+      ln -s ${vulkan-loader}/lib/libvulkan.so.1 $out/bin/weweb/libvulkan.so.1
 
-    # libcef.so is a prebuilt binary with no RPATH for Mesa, Vulkan, or Wayland.
-    # Without these paths it cannot dlopen its GL/EGL/Wayland dependencies at runtime.
-    # NOTE: do NOT replace the CEF-bundled libEGL.so or libGLESv2.so. Those are
-    # ANGLE's own EGL/GLES implementation. Swapping them for the system libglvnd
-    # causes EGL_BAD_ATTRIBUTE crashes on NVIDIA: NVIDIA's libEGL_nvidia.so does not
-    # implement the ANGLE-specific context-virtualization EGL attributes that Chromium
-    # passes when creating shared GPU contexts.
-    patchelf --add-rpath "${lib.makeLibraryPath [ mesa vulkan-loader wayland libGL ]}" $out/bin/weweb/libcef.so
-  '';
+      # libcef.so is a prebuilt binary with no RPATH for Mesa, Vulkan, or Wayland.
+      # Without these paths it cannot dlopen its GL/EGL/Wayland dependencies at runtime.
+      # NOTE: do NOT replace the CEF-bundled libEGL.so or libGLESv2.so. Those are
+      # ANGLE's own EGL/GLES implementation. Swapping them for the system libglvnd
+      # causes EGL_BAD_ATTRIBUTE crashes on NVIDIA: NVIDIA's libEGL_nvidia.so does not
+      # implement the ANGLE-specific context-virtualization EGL attributes that Chromium
+      # passes when creating shared GPU contexts.
+      patchelf --add-rpath "${lib.makeLibraryPath [mesa vulkan-loader wayland libGL]}" $out/bin/weweb/libcef.so
+    '';
 
-  meta = with lib; {
-    description = "Wallpaper Engine renderer plugin for waywallen (open-wallpaper-engine)";
-    homepage = "https://github.com/waywallen/open-wallpaper-engine";
-    license = licenses.gpl2Only;
-    platforms = platforms.linux;
-  };
-}
+    installPhase = ''
+      mkdir -p $out/share/waywallen
+      cp -r share/waywallen/* $out/share/waywallen/
+    '';
+
+    meta = with lib; {
+      description = "Wallpaper Engine renderer plugin for waywallen (open-wallpaper-engine)";
+      homepage = "https://github.com/waywallen/open-wallpaper-engine";
+      license = licenses.gpl2Only;
+      platforms = platforms.linux;
+    };
+  }

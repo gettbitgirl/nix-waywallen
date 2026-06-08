@@ -1,19 +1,20 @@
-{ lib
-, llvmPackages_latest
-, cmake
-, pkg-config
-, ffmpeg
-, libGL          # EGL headers (via libGL/mesa)
-, libgbm         # gbm.pc (mesa-libgbm)
-, vulkan-loader
-, vulkan-headers
-, libva
-, libpulseaudio
-, glslang        # provides glslangValidator, required by wavsen::video
-, ninja
-, src
-, rstd-src
-, wavsen-src
+{
+  lib,
+  llvmPackages_latest,
+  cmake,
+  pkg-config,
+  ffmpeg,
+  libGL, # EGL headers (via libGL/mesa)
+  libgbm, # gbm.pc (mesa-libgbm)
+  vulkan-loader,
+  vulkan-headers,
+  libva,
+  libpulseaudio,
+  glslang, # provides glslangValidator, required by wavsen::video
+  ninja,
+  src,
+  rstd-src,
+  wavsen-src,
 }:
 llvmPackages_latest.stdenv.mkDerivation rec {
   pname = "waywallen-plugins";
@@ -21,7 +22,7 @@ llvmPackages_latest.stdenv.mkDerivation rec {
 
   inherit src;
 
-  hardeningDisable = [ "fortify" ];
+  hardeningDisable = ["fortify"];
 
   postPatch = ''
     # Patch top-level CMakeLists.txt:
@@ -43,19 +44,19 @@ llvmPackages_latest.stdenv.mkDerivation rec {
     cmake
     pkg-config
     ninja
-    glslang        # glslangValidator for wavsen shader compilation
+    glslang # glslangValidator for wavsen shader compilation
     llvmPackages_latest.clang-tools
     llvmPackages_latest.lld
   ];
 
   buildInputs = [
     ffmpeg
-    libGL          # EGL headers
-    libgbm         # GBM (gbm.pc + libgbm)
+    libGL # EGL headers
+    libgbm # GBM (gbm.pc + libgbm)
     vulkan-loader
     vulkan-headers
-    libva          # wavsen dependency
-    libpulseaudio  # wavsen dependency
+    libva # wavsen dependency
+    libpulseaudio # wavsen dependency
   ];
 
   cmakeFlags = [
@@ -71,6 +72,11 @@ llvmPackages_latest.stdenv.mkDerivation rec {
     # C++20 module scanning
     "-DCMAKE_CXX_COMPILER_CLANG_SCAN_DEPS=${llvmPackages_latest.clang-tools}/bin/clang-scan-deps"
   ];
+
+  installPhase = ''
+    mkdir -p $out/share/waywallen
+    cp -r share/waywallen/* $out/share/waywallen/
+  '';
 
   meta = with lib; {
     description = "Renderer plugin binaries (image + video) for waywallen";
