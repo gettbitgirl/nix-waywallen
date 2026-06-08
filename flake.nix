@@ -98,10 +98,10 @@
           name = "waywallen-${waywallen-daemon.version}";
           paths = [waywallen-daemon waywallen-plugins waywallen-open-wallpaper-engine waywallen-ui];
           nativeBuildInputs = [pkgs.makeWrapper];
-          #postBuild = ''
-          #  wrapProgram $out/bin/waywallen \
-          #    --add-flags "--ui $out/bin/waywallen-ui --plugin /run/current-system/sw/share/waywallen/plugins"
-          #'';
+          postBuild = ''
+            wrapProgram $out/bin/waywallen \
+              --add-flags "--ui $out/bin/waywallen-ui --plugin $out/bin"
+          '';
           meta =
             waywallen-daemon.meta
             // {
@@ -143,10 +143,10 @@
         name = "waywallen-${final.waywallen-daemon.version}";
         paths = [final.waywallen-daemon final.waywallen-plugins final.waywallen-open-wallpaper-engine final.waywallen-ui];
         nativeBuildInputs = [final.makeWrapper];
-        #postBuild = ''
-        #  wrapProgram $out/bin/waywallen \
-        #    --add-flags "--ui $out/bin/waywallen-ui --plugin /run/current-system/sw/share/waywallen/plugins"
-        #'';
+        postBuild = ''
+          wrapProgram $out/bin/waywallen \
+            --add-flags "--ui $out/bin/waywallen-ui --plugin $out/bin"
+        '';
         meta =
           final.waywallen-daemon.meta
           // {
