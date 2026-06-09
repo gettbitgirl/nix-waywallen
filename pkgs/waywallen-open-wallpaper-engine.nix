@@ -283,11 +283,6 @@ in
       patchelf --add-rpath "${lib.makeLibraryPath [mesa vulkan-loader wayland libGL]}" $out/bin/weweb/libcef.so
     '';
 
-    installPhase = ''
-      mkdir -p $out/share/waywallen
-      cp -r share/waywallen/* $out/share/waywallen/
-    '';
-
     meta = with lib; {
       description = "Wallpaper Engine renderer plugin for waywallen (open-wallpaper-engine)";
       homepage = "https://github.com/waywallen/open-wallpaper-engine";

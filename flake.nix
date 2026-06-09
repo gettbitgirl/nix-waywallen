@@ -100,7 +100,7 @@
           nativeBuildInputs = [pkgs.makeWrapper];
           postBuild = ''
             wrapProgram $out/bin/waywallen \
-              --add-flags "--ui $out/bin/waywallen-ui --plugin $out/bin"
+              --add-flags "--ui $out/bin/waywallen-ui --plugin $out/share/waywallen"
           '';
           meta =
             waywallen-daemon.meta
@@ -145,7 +145,7 @@
         nativeBuildInputs = [final.makeWrapper];
         postBuild = ''
           wrapProgram $out/bin/waywallen \
-            --add-flags "--ui $out/bin/waywallen-ui --plugin $out/bin"
+            --add-flags "--ui $out/bin/waywallen-ui --plugin $out/share/waywallen"
         '';
         meta =
           final.waywallen-daemon.meta

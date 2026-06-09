@@ -73,11 +73,6 @@ llvmPackages_latest.stdenv.mkDerivation rec {
     "-DCMAKE_CXX_COMPILER_CLANG_SCAN_DEPS=${llvmPackages_latest.clang-tools}/bin/clang-scan-deps"
   ];
 
-  installPhase = ''
-    mkdir -p $out/share/waywallen
-    cp -r share/waywallen/* $out/share/waywallen/
-  '';
-
   meta = with lib; {
     description = "Renderer plugin binaries (image + video) for waywallen";
     homepage = "https://github.com/waywallen/waywallen";
