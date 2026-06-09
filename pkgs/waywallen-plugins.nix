@@ -30,10 +30,6 @@ llvmPackages_latest.stdenv.mkDerivation rec {
     substituteInPlace CMakeLists.txt \
       --replace "include(CPackConfig)" "# include(CPackConfig)"
 
-    # Patch bridge.c to send all plane fds for multi-planar modifiers:
-    substituteInPlace bridge/src/bridge.c \
-      --replace-fail "                  m, fds, m->count);" "                  m, fds, m->count * m->planes_per_buffer);"
-
     # Filter out AMD DCC modifiers (vendor ID 0x02, DCC bit 13) from Vulkan format caps:
     substituteInPlace bridge/src/pool_vulkan.c \
       --replace-fail '            if ((ff & want_features) != want_features) continue;' '            if ((ff & want_features) != want_features) continue;
