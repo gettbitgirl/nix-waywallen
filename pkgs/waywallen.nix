@@ -155,8 +155,7 @@ EOF
     # Wrap daemon with default UI and plugin paths + graphics libraries
     if [ -f $out/bin/waywallen ]; then
       wrapProgram $out/bin/waywallen \
-        --prefix LD_LIBRARY_PATH : ${lib.makeLibraryPath [ libGL vulkan-loader wayland libgbm libxkbcommon ]} \
-
+        --prefix LD_LIBRARY_PATH : ${lib.makeLibraryPath [ libGL vulkan-loader wayland libgbm libxkbcommon ]}
     fi
 
     if [ -f $out/bin/waywallen_renderer ]; then

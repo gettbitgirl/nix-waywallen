@@ -7,6 +7,19 @@ let
       (self.packages.${pkgs.stdenv.hostPlatform.system} or self.packages.${pkgs.system})
     else
       pkgs;
+  finalPackage =
+    if cfg.plugins == [ ] then
+      cfg.package
+    else
+      pkgs.symlinkJoin {
+        name = "${cfg.package.name or "waywallen"}-with-plugins";
+        paths = [ cfg.package ];
+        nativeBuildInputs = [ pkgs.makeWrapper ];
+        postBuild = ''
+          wrapProgram $out/bin/waywallen \
+            ${lib.concatMapStringsSep " " (p: "--add-flags \"--plugin ${p}/share/waywallen\"") cfg.plugins}
+        '';
+      };
 in
 {
   options.programs.waywallen = {
@@ -62,7 +75,7 @@ in
 
   config = lib.mkIf cfg.enable {
     home.packages = [
-      cfg.package
+      finalPackage
     ]
     ++ cfg.plugins
     ++ lib.optional (cfg.displayBackend == "layer-shell") cfg.layerShellPackage
