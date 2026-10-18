@@ -156,7 +156,7 @@ EOF
     if [ -f $out/bin/waywallen ]; then
       wrapProgram $out/bin/waywallen \
         --prefix LD_LIBRARY_PATH : ${lib.makeLibraryPath [ libGL vulkan-loader wayland libgbm libxkbcommon ]} \
-        --add-flags "--ui $out/bin/waywallen-ui --plugin $out/share/waywallen"
+
     fi
 
     if [ -f $out/bin/waywallen_renderer ]; then
