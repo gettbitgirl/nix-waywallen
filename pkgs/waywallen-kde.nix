@@ -2,23 +2,22 @@
 , stdenv
 , cmake
 , pkg-config
+, gettext
 , qt6
 , vulkan-headers
-, libGL
-, libgbm
-, vulkan-loader
 , src
 }:
 
 stdenv.mkDerivation {
   pname = "waywallen-display-kde";
-  version = "0.3.1";
+  version = "0.4.2";
 
   inherit src;
 
   nativeBuildInputs = [
     cmake
     pkg-config
+    gettext
     qt6.wrapQtAppsHook
   ];
 
@@ -26,9 +25,6 @@ stdenv.mkDerivation {
     qt6.qtbase
     qt6.qtdeclarative
     vulkan-headers
-    libGL
-    libgbm
-    vulkan-loader
   ];
 
   cmakeFlags = [

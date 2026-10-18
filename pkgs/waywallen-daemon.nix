@@ -13,13 +13,18 @@
 , src
 }:
 
-rustPlatform.buildRustPackage rec {
+rustPlatform.buildRustPackage {
   pname = "waywallen-daemon";
-  version = "0.3.3";
+  version = "0.4.4";
 
   inherit src;
 
-  cargoHash = "sha256-29DXBGXRHWisZC22dn8hV1fWs6eqLPVtCyHCf+lEHxg=";
+  cargoLock = {
+    lockFile = "${src}/Cargo.lock";
+    outputHashes = {
+      "mlua-extra-0.1.0" = "sha256-Dp8E/4tQHB17CxL5Fpis+gRMkvzR2/Ose13kzLreguQ=";
+    };
+  };
 
   nativeBuildInputs = [
     pkg-config
@@ -52,5 +57,7 @@ rustPlatform.buildRustPackage rec {
     homepage = "https://github.com/waywallen/waywallen";
     license = licenses.mit;
     platforms = platforms.linux;
+    mainProgram = "waywallen";
   };
 }
+

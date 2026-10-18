@@ -1,37 +1,26 @@
 {
   lib,
   stdenv,
-  llvmPackages_latest,
   callPackage,
-  cmake,
+  llvmPackages_22,
+  lito,
   pkg-config,
+  cmake,
   ninja,
+  glslang,
+  waywallen-plugins,
   freetype,
   lz4,
   fontconfig,
-  ffmpeg,
+  glfw3,
   vulkan-loader,
   vulkan-headers,
-  libpulseaudio, # wavsen audio backend
-  libva, # wavsen VA-API dep
-  expat,
-  libgbm, # wavsen GBM dep (gbm.pc)
+  ffmpeg,
+  libpulseaudio,
+  libva,
+  libgbm,
   libGL,
-  autoPatchelfHook,
-  # CEF runtime deps — autoPatchelfHook resolves libcef.so's NEEDED entries against these
-  alsa-lib,
-  atk,
-  cairo,
-  cups,
-  dbus,
-  glib,
-  gtk3,
-  libdrm,
-  libxkbcommon,
-  mesa,
-  nspr,
-  nss,
-  pango,
+  expat,
   wayland,
   libx11,
   libxcomposite,
@@ -40,161 +29,158 @@
   libxfixes,
   libxrandr,
   libxcb,
-  glslang, # provides glslangValidator for wavsen GLSL→SPIR-V compilation
-  waywallen-plugins, # provides waywallen::bridge headers/cmake config
+  autoPatchelfHook,
   patchelf,
+  alsa-lib,
+  at-spi2-core,
+  cairo,
+  cups,
+  dbus,
+  glib,
+  libxkbcommon,
+  nspr,
+  nss,
+  pango,
   src,
-}: let
-  # All FETCHDEPS_LOCAL_* paths come from upstream deps.json — bump the
-  # open-wallpaper-engine input to refresh pins.
-  fetchDep = callPackage ./fetch-upstream-deps.nix {
-    depsJson = builtins.fromJSON (builtins.readFile "${src}/deps.json");
-  };
-
-  deps = {
-    rstd = fetchDep "rstd";
-    wavsen = fetchDep "wavsen";
-    vma = fetchDep "vma";
-    vvk = fetchDep "vvk";
-    eigen = fetchDep "eigen";
-    spirv_reflect = fetchDep "spirv_reflect";
-    glslang_src = fetchDep "glslang";
-    quickjs = fetchDep "quickjs";
-
-    # CEF is a prebuilt binary distro; autoPatchelfHook rewrites interpreter /
-    # NEEDED paths so libcef.so can resolve against nixpkgs libraries.
-    cef = stdenv.mkDerivation {
-      pname = "cef-minimal";
-      version = "vendor";
-      src = fetchDep "cef";
-      nativeBuildInputs = [autoPatchelfHook];
-      buildInputs = [
-        alsa-lib
-        atk
-        cairo
-        cups
-        dbus
-        expat
-        fontconfig
-        glib
-        gtk3
-        libdrm
-        libxkbcommon
-        mesa
-        nspr
-        nss
-        pango
-        wayland
-        libx11
-        libxcomposite
-        libxdamage
-        libxext
-        libxfixes
-        libxrandr
-        libxcb
-      ];
-      # src is already the unpacked CEF tree from fetch-upstream-deps.
-      dontUnpack = true;
-      installPhase = ''
-        mkdir -p $out
-        cp -a $src/. $out/
-      '';
-    };
+}:
+let
+  mkLitoBundle = callPackage ./mk-lito-bundle.nix { };
+  bundleInfo = mkLitoBundle {
+    lockFile = "${src}/lito.lock";
+    inherit (stdenv.hostPlatform) system;
   };
 in
-  llvmPackages_latest.stdenv.mkDerivation {
-    pname = "waywallen-open-wallpaper-engine";
-    version = "0.2.3";
+stdenv.mkDerivation {
+  pname = "waywallen-open-wallpaper-engine";
+  version = "0.3.0";
 
-    inherit src;
+  inherit src;
 
-    # wavsen and rstd are compiled as static libs without glibc FORTIFY_SOURCE
-    # pass_object_size annotations. With FORTIFY enabled, glibc replaces read/pread/open
-    # with annotated variants whose signatures don't match, causing link failures.
-    hardeningDisable = ["fortify"];
+  nativeBuildInputs = [
+    lito
+    llvmPackages_22.clang
+    llvmPackages_22.bintools
+    pkg-config
+    cmake
+    ninja
+    glslang
+    autoPatchelfHook
+    patchelf
+  ];
 
-    # Make FETCHDEPS_LOCAL honor x-cmake.source_subdir (Flatpak already does).
-    # Without this, vendored eigen/cef run their full CMakeLists and collide with
-    # upstream's post-fetch setup that expects cmake-noop.
-    patches = [
-      ./patches/owe-fetchdeps-local-source-subdir.patch
-    ];
+  buildInputs = [
+    waywallen-plugins
+    freetype
+    lz4
+    fontconfig
+    glfw3
+    vulkan-loader
+    vulkan-headers
+    ffmpeg
+    libpulseaudio
+    libva
+    libgbm
+    libGL
+    expat
+    wayland
+    libx11
+    libxcomposite
+    libxdamage
+    libxext
+    libxfixes
+    libxrandr
+    libxcb
+    alsa-lib
+    at-spi2-core
+    cairo
+    cups
+    dbus
+    glib
+    libxkbcommon
+    nspr
+    nss
+    pango
+  ];
 
-    nativeBuildInputs = [
-      cmake
-      pkg-config
-      ninja
-      glslang # glslangValidator for wavsen shader compilation
-      llvmPackages_latest.clang-tools # clang-scan-deps for C++20 module scanning
-      llvmPackages_latest.lld # faster linker; required by upstream CMake config
-      patchelf # used in postFixup to patch libcef.so RPATH
-    ];
+  hardeningDisable = [ "fortify" ];
+  NIX_CFLAGS_COMPILE = "-Qunused-arguments -Wno-error=unused-command-line-argument";
 
-    buildInputs = [
-      freetype
-      lz4
-      fontconfig
-      ffmpeg
-      vulkan-loader
-      vulkan-headers
-      libpulseaudio # wavsen audio backend
-      libva # wavsen VA-API dep
-      libgbm # wavsen GBM dep
-      libGL # also used in postFixup RPATH for libcef.so
-      expat
-      waywallen-plugins
-      libx11 # waywallen-weweb-renderer needs X11 to link libcef_dll_wrapper
-    ];
+  postPatch = ''
+    substituteInPlace lito.toml \
+      --replace-fail 'config-directory = "lib/cmake/quickjs"' 'config-directory = "lib64/cmake/quickjs"'
 
-    cmakeFlags = [
-      "-DBUILD_WEWEB=ON" # CEF-based web wallpaper renderer
-      "-DBUILD_WESCENE=ON" # scene (particle/shader) wallpaper renderer
-      "-DBUILD_VIEWER=OFF" # standalone viewer binary; not needed for daemon use
-      "-DBUILD_TESTS=OFF"
-      "-DBUILD_WAYWALLEN=ON"
-      # Point CMake's clang module scanner at the Nix-store clang-tools binary
-      "-DCMAKE_CXX_COMPILER_CLANG_SCAN_DEPS=${llvmPackages_latest.clang-tools}/bin/clang-scan-deps"
-      # Provide the waywallen IPC bridge cmake config from the plugins package
-      "-Dwaywallen-bridge_DIR=${waywallen-plugins}/lib/cmake/waywallen-bridge"
-      # Redirect all FetchContent calls to pre-fetched Nix store paths
-      "-DFETCHDEPS_LOCAL_rstd=${deps.rstd}"
-      "-DFETCHDEPS_LOCAL_wavsen=${deps.wavsen}"
-      "-DFETCHDEPS_LOCAL_vma=${deps.vma}"
-      "-DFETCHDEPS_LOCAL_vvk=${deps.vvk}"
-      "-DFETCHDEPS_LOCAL_eigen=${deps.eigen}"
-      "-DFETCHDEPS_LOCAL_spirv_reflect=${deps.spirv_reflect}"
-      "-DFETCHDEPS_LOCAL_glslang=${deps.glslang_src}"
-      "-DFETCHDEPS_LOCAL_quickjs=${deps.quickjs}"
-      "-DFETCHDEPS_LOCAL_cef=${deps.cef}"
-    ];
+    substituteInPlace src/Web/cmake/CEF.cmake \
+      --replace-fail 'if(OS_MAC)
+    # The macOS CEF distribution is a dynamically loaded framework.' 'set_property(TARGET libcef_dll_wrapper PROPERTY CXX_SCAN_FOR_MODULES OFF)
+    target_compile_options(libcef_dll_wrapper PRIVATE -Qunused-arguments -Wno-error)
 
-    postFixup = ''
-      # CEF's minimal tarball ships libvulkan.so.1 and a SwiftShader software Vulkan
-      # implementation (libvk_swiftshader.so + vk_swiftshader_icd.json). These are
-      # unpatched upstream binaries with hardcoded non-Nix paths that will fail to
-      # load. Remove them and replace libvulkan.so.1 with the system loader.
+if(OS_MAC)
+    # The macOS CEF distribution is a dynamically loaded framework.'
+  '';
+
+  configurePhase = ''
+    runHook preConfigure
+    rm -rf build
+    export HOME=$(mktemp -d)
+    export XDG_DATA_HOME=$(mktemp -d)
+    export LITO_ALLOWED_ROOTS="/nix/store"
+
+    mkdir -p .lito
+    cat << 'EOF' > .lito/config.toml
+${bundleInfo.configToml}
+EOF
+    runHook postConfigure
+  '';
+
+  buildPhase = ''
+    runHook preBuild
+    lito build \
+      -p owe-waywallen-scene-renderer \
+      -p owe-waywallen-web-renderer \
+      --profile release \
+      --offline \
+      --source-bundle ${bundleInfo.sourceBundle} \
+      --use-env-flags
+    runHook postBuild
+  '';
+
+  installPhase = ''
+    runHook preInstall
+    lito install \
+      -p owe-waywallen-scene-renderer \
+      -p owe-waywallen-web-renderer \
+      -p owe-waywallen-plugin \
+      --prefix $out \
+      --profile release \
+      --offline \
+      --source-bundle ${bundleInfo.sourceBundle} \
+      --use-env-flags
+    runHook postInstall
+  '';
+
+  postFixup = ''
+    # Replace prebuilt libvulkan.so.1 with the system loader
+    if [ -f $out/lib/weweb/libvulkan.so.1 ]; then
+      rm -f $out/lib/weweb/libvulkan.so.1
+      ln -s ${vulkan-loader}/lib/libvulkan.so.1 $out/lib/weweb/libvulkan.so.1
+    fi
+    if [ -f $out/bin/weweb/libvulkan.so.1 ]; then
       rm -f $out/bin/weweb/libvulkan.so.1
-      rm -f $out/bin/weweb/libvk_swiftshader.so
-      rm -f $out/bin/weweb/vk_swiftshader_icd.json
-
-      # libcef.so probes for Vulkan at runtime. Point it at the system vulkan-loader
-      # which knows how to find ICD manifests via XDG/system paths.
       ln -s ${vulkan-loader}/lib/libvulkan.so.1 $out/bin/weweb/libvulkan.so.1
+    fi
 
-      # libcef.so is a prebuilt binary with no RPATH for Mesa, Vulkan, or Wayland.
-      # Without these paths it cannot dlopen its GL/EGL/Wayland dependencies at runtime.
-      # NOTE: do NOT replace the CEF-bundled libEGL.so or libGLESv2.so. Those are
-      # ANGLE's own EGL/GLES implementation. Swapping them for the system libglvnd
-      # causes EGL_BAD_ATTRIBUTE crashes on NVIDIA: NVIDIA's libEGL_nvidia.so does not
-      # implement the ANGLE-specific context-virtualization EGL attributes that Chromium
-      # passes when creating shared GPU contexts.
-      patchelf --add-rpath "${lib.makeLibraryPath [mesa vulkan-loader wayland libGL]}" $out/bin/weweb/libcef.so
-    '';
+    # Patch libcef.so RPATH for Mesa, Vulkan, Wayland, and GL
+    for cef in $out/lib/weweb/libcef.so $out/bin/weweb/libcef.so; do
+      if [ -f "$cef" ]; then
+        patchelf --add-rpath "${lib.makeLibraryPath [ libGL vulkan-loader wayland ]}" "$cef"
+      fi
+    done
+  '';
 
-    meta = with lib; {
-      description = "Wallpaper Engine renderer plugin for waywallen (open-wallpaper-engine)";
-      homepage = "https://github.com/waywallen/open-wallpaper-engine";
-      license = licenses.gpl2Only;
-      platforms = platforms.linux;
-    };
-  }
+  meta = with lib; {
+    description = "Wallpaper Engine renderer plugin for waywallen (open-wallpaper-engine)";
+    homepage = "https://github.com/waywallen/open-wallpaper-engine";
+    license = licenses.gpl2Only;
+    platforms = platforms.linux;
+  };
+}
