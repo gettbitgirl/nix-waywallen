@@ -12,6 +12,7 @@
   libgbm,
   libglvnd,
   vulkan-headers,
+  vulkan-loader,
   waywallen-src,
 }:
 let
@@ -33,6 +34,7 @@ stdenv.mkDerivation {
     llvmPackages_22.bintools
     pkg-config
     glslang
+    patchelf
   ];
 
   buildInputs = [
@@ -42,6 +44,7 @@ stdenv.mkDerivation {
     libgbm
     libglvnd
     vulkan-headers
+    vulkan-loader
   ];
 
   hardeningDisable = [ "fortify" ];
@@ -85,6 +88,14 @@ EOF
       --source-bundle ${bundleInfo.sourceBundle} \
       --use-env-flags
     runHook postInstall
+  '';
+
+  postFixup = ''
+    for bin in $out/bin/waywallen-video-renderer $out/bin/waywallen-image-renderer; do
+      if [ -f "$bin" ]; then
+        patchelf --add-rpath "${lib.makeLibraryPath [ vulkan-loader libpulseaudio libglvnd ]}" "$bin"
+      fi
+    done
   '';
 
   meta = with lib; {

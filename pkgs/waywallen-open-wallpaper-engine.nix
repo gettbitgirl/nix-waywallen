@@ -31,6 +31,7 @@
   libxcb,
   autoPatchelfHook,
   patchelf,
+  makeWrapper,
   alsa-lib,
   at-spi2-core,
   cairo,
@@ -66,6 +67,7 @@ stdenv.mkDerivation {
     glslang
     autoPatchelfHook
     patchelf
+    makeWrapper
   ];
 
   buildInputs = [
@@ -169,12 +171,17 @@ EOF
       ln -s ${vulkan-loader}/lib/libvulkan.so.1 $out/bin/weweb/libvulkan.so.1
     fi
 
-    # Patch libcef.so RPATH for Mesa, Vulkan, Wayland, and GL
-    for cef in $out/lib/weweb/libcef.so $out/bin/weweb/libcef.so; do
-      if [ -f "$cef" ]; then
-        patchelf --add-rpath "${lib.makeLibraryPath [ libGL vulkan-loader wayland ]}" "$cef"
-      fi
-    done
+    # Wrap waywallen-wescene-renderer with PulseAudio (for wallpaper audio playback)
+    if [ -f $out/bin/waywallen-wescene-renderer ]; then
+      wrapProgram $out/bin/waywallen-wescene-renderer \
+        --prefix LD_LIBRARY_PATH : ${lib.makeLibraryPath [ libpulseaudio ]}
+    fi
+
+    # Wrap waywallen-weweb-renderer with graphics and audio libraries
+    if [ -f $out/lib/weweb/waywallen-weweb-renderer ]; then
+      wrapProgram $out/lib/weweb/waywallen-weweb-renderer \
+        --prefix LD_LIBRARY_PATH : ${lib.makeLibraryPath [ libGL vulkan-loader wayland libpulseaudio alsa-lib ]}
+    fi
   '';
 
   meta = with lib; {

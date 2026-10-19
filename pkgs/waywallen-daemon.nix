@@ -9,6 +9,7 @@
 , libgbm
 , libxkbcommon
 , libpulseaudio
+, ffmpeg
 , makeWrapper
 , src
 }:
@@ -40,6 +41,7 @@ rustPlatform.buildRustPackage {
     libgbm
     libxkbcommon
     libpulseaudio
+    ffmpeg
   ];
 
   cargoBuildFlags = [ "-p" "waywallen" ];
@@ -47,9 +49,9 @@ rustPlatform.buildRustPackage {
 
   postInstall = ''
     wrapProgram $out/bin/waywallen \
-      --prefix LD_LIBRARY_PATH : ${lib.makeLibraryPath [ libGL vulkan-loader wayland libgbm libxkbcommon ]}
+      --prefix LD_LIBRARY_PATH : ${lib.makeLibraryPath [ libGL vulkan-loader wayland libgbm libxkbcommon libpulseaudio ffmpeg ]}
     wrapProgram $out/bin/waywallen_renderer \
-      --prefix LD_LIBRARY_PATH : ${lib.makeLibraryPath [ libGL vulkan-loader wayland libgbm libxkbcommon ]}
+      --prefix LD_LIBRARY_PATH : ${lib.makeLibraryPath [ libGL vulkan-loader wayland libgbm libxkbcommon libpulseaudio ffmpeg ]}
   '';
 
   meta = with lib; {

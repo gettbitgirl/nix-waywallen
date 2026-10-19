@@ -152,15 +152,25 @@ EOF
       --source-bundle ${bundleInfo.sourceBundle} \
       --use-env-flags
 
-    # Wrap daemon with default UI and plugin paths + graphics libraries
+    # Wrap daemon with default UI and plugin paths + graphics and audio libraries
     if [ -f $out/bin/waywallen ]; then
       wrapProgram $out/bin/waywallen \
-        --prefix LD_LIBRARY_PATH : ${lib.makeLibraryPath [ libGL vulkan-loader wayland libgbm libxkbcommon ]}
+        --prefix LD_LIBRARY_PATH : ${lib.makeLibraryPath [ libGL vulkan-loader wayland libgbm libxkbcommon libpulseaudio ffmpeg ]}
     fi
 
     if [ -f $out/bin/waywallen_renderer ]; then
       wrapProgram $out/bin/waywallen_renderer \
-        --prefix LD_LIBRARY_PATH : ${lib.makeLibraryPath [ libGL vulkan-loader wayland libgbm libxkbcommon ]}
+        --prefix LD_LIBRARY_PATH : ${lib.makeLibraryPath [ libGL vulkan-loader wayland libgbm libxkbcommon libpulseaudio ffmpeg ]}
+    fi
+
+    if [ -f $out/bin/waywallen-video-renderer ]; then
+      wrapProgram $out/bin/waywallen-video-renderer \
+        --prefix LD_LIBRARY_PATH : ${lib.makeLibraryPath [ libGL vulkan-loader libva libpulseaudio ]}
+    fi
+
+    if [ -f $out/bin/waywallen-image-renderer ]; then
+      wrapProgram $out/bin/waywallen-image-renderer \
+        --prefix LD_LIBRARY_PATH : ${lib.makeLibraryPath [ libGL vulkan-loader libva ]}
     fi
 
     runHook postInstall
