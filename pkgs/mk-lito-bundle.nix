@@ -10,6 +10,8 @@
   system ? null,
   # Optional overrides for git dependencies, keyed by repo URL or package name
   gitOverrides ? { },
+  # Git dependencies provided directly (e.g. from flake inputs or resolver)
+  gitDeps ? { },
   # Base registry URL (defaults to upstream litocpp registry)
   registryUrl ? "https://registry.litocpp.org/",
 }:
@@ -118,10 +120,12 @@ let
           gitOverrides.${name}
         else if gitOverrides ? ${url} then
           gitOverrides.${url}
+        else if gitDeps ? ${name} then
+          gitDeps.${name}
+        else if gitDeps ? ${url} then
+          gitDeps.${url}
         else
-          builtins.fetchGit {
-            inherit url rev;
-          };
+          throw "mk-lito-bundle: Missing git dependency '${name}' (${url}). Please supply it via gitDeps or gitOverrides.";
     in
     {
       inherit name url drv;
@@ -160,7 +164,7 @@ let
   '') uniqueGitDeps;
 
   # Attrset of git deps by name: { wavsen = /nix/store/...; ... }
-  gitDeps = builtins.listToAttrs (
+  gitDepsMap = builtins.listToAttrs (
     map (g: {
       name = g.name;
       value = g.drv;
@@ -171,9 +175,9 @@ in
   inherit
     sourceBundle
     configToml
-    gitDeps
     resolvedRegistryPkgs
     resolvedArchives
     uniqueGitDeps
     ;
+  gitDeps = gitDepsMap;
 }

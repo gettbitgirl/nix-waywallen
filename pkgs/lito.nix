@@ -1,42 +1,22 @@
-{ lib
-, llvmPackages_22
-, fetchFromGitHub
-, fetchzip
-, cmake
-, ninja
-, pkg-config
-, zstd
-, openssl
-, glibc
+{
+  lib,
+  llvmPackages_22,
+  cmake,
+  ninja,
+  pkg-config,
+  zstd,
+  openssl,
+  glibc,
+  src,
+  rstdSrc,
+  luatoSrc,
+  licryptoSrc,
+  zstdSrc ? null,
+  luaSrc,
 }:
 
 let
   version = "0.8.6";
-  src = fetchFromGitHub {
-    owner = "litocpp";
-    repo = "lito";
-    rev = "v${version}";
-    hash = "sha256-5KOC3DQe5N3/KrHNObzF4q3kG/4yxu674NCbEDzD28A=";
-  };
-
-  deps = builtins.fromJSON (builtins.readFile "${src}/deps.json");
-  fetchDependency = name:
-    let dep = deps.${name}; in
-    fetchFromGitHub {
-      inherit (dep) owner repo rev;
-      hash = dep.narHash;
-    };
-
-  rstdSrc = fetchDependency "rstd";
-  luatoSrc = fetchDependency "luato";
-  licryptoSrc = fetchDependency "licrypto";
-  zstdSrc = fetchDependency "zstd";
-
-  luaSrc = fetchzip {
-    url = "https://www.lua.org/ftp/lua-5.5.1.tar.gz";
-    hash = "sha256-vb3Nt5dMPL/G6L1MmJPGQnQT3F8p6iK6Gu2F/cG00ho=";
-  };
-
   llvmPkgs = llvmPackages_22;
 in
 llvmPkgs.libcxxStdenv.mkDerivation {
@@ -68,9 +48,12 @@ llvmPkgs.libcxxStdenv.mkDerivation {
     "-DFETCHCONTENT_SOURCE_DIR_RSTD=${rstdSrc}"
     "-DFETCHCONTENT_SOURCE_DIR_LUATO=${luatoSrc}"
     "-DFETCHCONTENT_SOURCE_DIR_LICRYPTO=${licryptoSrc}"
-    "-DFETCHCONTENT_SOURCE_DIR_ZSTD=${zstdSrc}"
     "-DFETCHCONTENT_SOURCE_DIR_LUA=${luaSrc}"
     "-DFETCHCONTENT_FULLY_DISCONNECTED=ON"
+  ] ++ lib.optionals (zstdSrc != null) [
+    "-DFETCHCONTENT_SOURCE_DIR_ZSTD=${zstdSrc}"
+  ] ++ lib.optionals (zstdSrc == null) [
+    "-DLITO_USE_SYSTEM_ZSTD=ON"
   ];
 
   NIX_CFLAGS_COMPILE = "-U_FORTIFY_SOURCE -D_FORTIFY_SOURCE=0";

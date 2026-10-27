@@ -43,12 +43,15 @@
   nss,
   pango,
   src,
+  gitDeps ? { },
+  gitOverrides ? { },
 }:
 let
   mkLitoBundle = callPackage ./mk-lito-bundle.nix { };
   bundleInfo = mkLitoBundle {
     lockFile = "${src}/lito.lock";
     inherit (stdenv.hostPlatform) system;
+    inherit gitDeps gitOverrides;
   };
 in
 stdenv.mkDerivation {

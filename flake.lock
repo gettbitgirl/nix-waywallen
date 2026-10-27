@@ -1,30 +1,103 @@
 {
   "nodes": {
-    "flake-utils": {
-      "inputs": {
-        "systems": "systems"
-      },
+    "flake-file": {
       "locked": {
-        "lastModified": 1731533236,
-        "narHash": "sha256-l0KFg5HjrsfsO/JpG+r7fRrqm12kzFHyUHqHCVpMMbI=",
-        "owner": "numtide",
-        "repo": "flake-utils",
-        "rev": "11707dc2f618dd54ca8739b309ec4fc024de578b",
+        "lastModified": 1791955343,
+        "narHash": "sha256-yquDmN2vKAtSfwJLXcEwpq9z+4txQLtlPd+Hmxss+nM=",
+        "owner": "denful",
+        "repo": "flake-file",
+        "rev": "1281456a5218ac60ada6fcb40a8f894684940199",
         "type": "github"
       },
       "original": {
-        "owner": "numtide",
-        "repo": "flake-utils",
+        "owner": "denful",
+        "repo": "flake-file",
         "type": "github"
       }
     },
-    "lito": {
-      "inputs": {
-        "flake-utils": "flake-utils",
-        "nixpkgs": [
-          "nixpkgs"
-        ]
+    "lito-dep-licrypto": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1791741731,
+        "narHash": "sha256-Aussj13CS3lAIR0TmmU7NgVQg2l2QUdiNS47oa7Fcaw=",
+        "owner": "litocpp",
+        "repo": "licrypto",
+        "rev": "40da005cbd7faf1328fd29a01cb0c534d6998612",
+        "type": "github"
       },
+      "original": {
+        "owner": "litocpp",
+        "repo": "licrypto",
+        "rev": "40da005cbd7faf1328fd29a01cb0c534d6998612",
+        "type": "github"
+      }
+    },
+    "lito-dep-lua": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1784902059,
+        "narHash": "sha256-vb3Nt5dMPL/G6L1MmJPGQnQT3F8p6iK6Gu2F/cG00ho=",
+        "type": "tarball",
+        "url": "https://www.lua.org/ftp/lua-5.5.1.tar.gz"
+      },
+      "original": {
+        "type": "tarball",
+        "url": "https://www.lua.org/ftp/lua-5.5.1.tar.gz"
+      }
+    },
+    "lito-dep-luato": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1790102050,
+        "narHash": "sha256-XL1evcZbZJ2LfTi5T9UQ+4YBEw5YnDsGeY3IBS+Fs5U=",
+        "owner": "litocpp",
+        "repo": "luato",
+        "rev": "df0c6f2d1cce2051b4711d36067619eda7933683",
+        "type": "github"
+      },
+      "original": {
+        "owner": "litocpp",
+        "repo": "luato",
+        "rev": "df0c6f2d1cce2051b4711d36067619eda7933683",
+        "type": "github"
+      }
+    },
+    "lito-dep-rstd": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1791887155,
+        "narHash": "sha256-JqwAOvqQYzh1v9FlA4Spuab7I6gOu/f3uiVFXiwZS0E=",
+        "owner": "litocpp",
+        "repo": "rstd",
+        "rev": "0c755371a02ccee658fa6d63728b6078cb2f9070",
+        "type": "github"
+      },
+      "original": {
+        "owner": "litocpp",
+        "repo": "rstd",
+        "rev": "0c755371a02ccee658fa6d63728b6078cb2f9070",
+        "type": "github"
+      }
+    },
+    "lito-dep-zstd": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1739923464,
+        "narHash": "sha256-tNFWIT9ydfozB8dWcmTMuZLCQmQudTFJIkSr0aG7S44=",
+        "owner": "facebook",
+        "repo": "zstd",
+        "rev": "f8745da6ff1ad1e7bab384bd1f9d742439278e99",
+        "type": "github"
+      },
+      "original": {
+        "owner": "facebook",
+        "repo": "zstd",
+        "rev": "f8745da6ff1ad1e7bab384bd1f9d742439278e99",
+        "type": "github"
+      }
+    },
+    "lito-src": {
+      "flake": false,
       "locked": {
         "lastModified": 1791909470,
         "narHash": "sha256-5KOC3DQe5N3/KrHNObzF4q3kG/4yxu674NCbEDzD28A=",
@@ -35,6 +108,7 @@
       },
       "original": {
         "owner": "litocpp",
+        "ref": "v0.8.6",
         "repo": "lito",
         "type": "github"
       }
@@ -72,28 +146,219 @@
         "type": "github"
       }
     },
+    "owe-dep-eigen": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1762634696,
+        "narHash": "sha256-vKDsxPuyPXwCxMY5vLXXwdqlpOytc2CX5sEW3hVrJVY=",
+        "ref": "refs/heads/master",
+        "rev": "bc3b39870ecb690a623a3f49149a358b95c5781d",
+        "revCount": 12861,
+        "type": "git",
+        "url": "https://gitlab.com/libeigen/eigen.git"
+      },
+      "original": {
+        "rev": "bc3b39870ecb690a623a3f49149a358b95c5781d",
+        "type": "git",
+        "url": "https://gitlab.com/libeigen/eigen.git"
+      }
+    },
+    "owe-dep-glslang": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1777668611,
+        "narHash": "sha256-wclcJ0NfqFXSUHGVsxjn2I8XxWbrkzOB4WXqsN1XtmE=",
+        "ref": "refs/heads/main",
+        "rev": "275822a6261ee689aadb1da5f09a0ec2f058685c",
+        "revCount": 5458,
+        "type": "git",
+        "url": "https://github.com/KhronosGroup/glslang.git"
+      },
+      "original": {
+        "rev": "275822a6261ee689aadb1da5f09a0ec2f058685c",
+        "type": "git",
+        "url": "https://github.com/KhronosGroup/glslang.git"
+      }
+    },
+    "owe-dep-quickjs": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1775893046,
+        "narHash": "sha256-kQDaDCljI+NcElufZZAmSGMbI2wyiQC6Lp4CyHW0aBY=",
+        "ref": "refs/heads/master",
+        "rev": "3c051980ab7e783dfbfb1c70c014ce5e05ecf24c",
+        "revCount": 1052,
+        "type": "git",
+        "url": "https://github.com/quickjs-ng/quickjs.git"
+      },
+      "original": {
+        "rev": "3c051980ab7e783dfbfb1c70c014ce5e05ecf24c",
+        "type": "git",
+        "url": "https://github.com/quickjs-ng/quickjs.git"
+      }
+    },
+    "owe-dep-spirv-reflect": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1786722515,
+        "narHash": "sha256-zJ2mHSp5Tnyp6/4XlBrVjr3MnkOxmFdSHESP6e+nUSY=",
+        "ref": "refs/heads/main",
+        "rev": "355785128c1b6ba808e3a7d0e344814fe6cff502",
+        "revCount": 519,
+        "type": "git",
+        "url": "https://github.com/hypengw/SPIRV-Reflect.git"
+      },
+      "original": {
+        "rev": "355785128c1b6ba808e3a7d0e344814fe6cff502",
+        "type": "git",
+        "url": "https://github.com/hypengw/SPIRV-Reflect.git"
+      }
+    },
+    "owe-dep-vrento": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1790325551,
+        "narHash": "sha256-CYeVnElpWfZadL+5xXOVUJgUa4EEWRv5NCDfd/4p7fc=",
+        "ref": "refs/heads/main",
+        "rev": "a781859c940325a909c77613b5b2795cc3d65e48",
+        "revCount": 209,
+        "type": "git",
+        "url": "https://github.com/vecren/vrento.git"
+      },
+      "original": {
+        "rev": "a781859c940325a909c77613b5b2795cc3d65e48",
+        "type": "git",
+        "url": "https://github.com/vecren/vrento.git"
+      }
+    },
+    "owe-dep-wavsen": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1790250746,
+        "narHash": "sha256-mvfNRwLaAkQ5woR7PuaY6fjeLQ08ru0+fUXqUtI6WbU=",
+        "ref": "refs/heads/main",
+        "rev": "73be92f4f9db0179e93e3f28d62077a2aed77a8e",
+        "revCount": 89,
+        "type": "git",
+        "url": "https://github.com/hypengw/wavsen.git"
+      },
+      "original": {
+        "rev": "73be92f4f9db0179e93e3f28d62077a2aed77a8e",
+        "type": "git",
+        "url": "https://github.com/hypengw/wavsen.git"
+      }
+    },
     "root": {
       "inputs": {
-        "lito": "lito",
+        "flake-file": "flake-file",
+        "lito-dep-licrypto": "lito-dep-licrypto",
+        "lito-dep-lua": "lito-dep-lua",
+        "lito-dep-luato": "lito-dep-luato",
+        "lito-dep-rstd": "lito-dep-rstd",
+        "lito-dep-zstd": "lito-dep-zstd",
+        "lito-src": "lito-src",
         "nixpkgs": "nixpkgs",
         "open-wallpaper-engine-src": "open-wallpaper-engine-src",
+        "owe-dep-eigen": "owe-dep-eigen",
+        "owe-dep-glslang": "owe-dep-glslang",
+        "owe-dep-quickjs": "owe-dep-quickjs",
+        "owe-dep-spirv-reflect": "owe-dep-spirv-reflect",
+        "owe-dep-vrento": "owe-dep-vrento",
+        "owe-dep-wavsen": "owe-dep-wavsen",
+        "waywallen-dep-luato": "waywallen-dep-luato",
+        "waywallen-dep-ncrequest": "waywallen-dep-ncrequest",
+        "waywallen-dep-qextra": "waywallen-dep-qextra",
+        "waywallen-dep-qml-material": "waywallen-dep-qml-material",
+        "waywallen-dep-wavsen": "waywallen-dep-wavsen",
         "waywallen-display-src": "waywallen-display-src",
         "waywallen-src": "waywallen-src"
       }
     },
-    "systems": {
+    "waywallen-dep-luato": {
+      "flake": false,
       "locked": {
-        "lastModified": 1681028828,
-        "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",
-        "owner": "nix-systems",
-        "repo": "default",
-        "rev": "da67096a3b9bf56a91d16901293e51ba5b49a27e",
-        "type": "github"
+        "lastModified": 1790102050,
+        "narHash": "sha256-XL1evcZbZJ2LfTi5T9UQ+4YBEw5YnDsGeY3IBS+Fs5U=",
+        "ref": "refs/heads/main",
+        "rev": "df0c6f2d1cce2051b4711d36067619eda7933683",
+        "revCount": 31,
+        "type": "git",
+        "url": "https://github.com/litocpp/luato.git"
       },
       "original": {
-        "owner": "nix-systems",
-        "repo": "default",
-        "type": "github"
+        "rev": "df0c6f2d1cce2051b4711d36067619eda7933683",
+        "type": "git",
+        "url": "https://github.com/litocpp/luato.git"
+      }
+    },
+    "waywallen-dep-ncrequest": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1791214457,
+        "narHash": "sha256-AOiuf9dJUWdVedfJ0ZdXBzbuSI+9U0Gko0xj6jT7R/0=",
+        "ref": "refs/heads/master",
+        "rev": "40d40224842a080039d2a76710fbedb20ee002ac",
+        "revCount": 141,
+        "type": "git",
+        "url": "https://github.com/hypengw/ncrequest.git"
+      },
+      "original": {
+        "rev": "40d40224842a080039d2a76710fbedb20ee002ac",
+        "type": "git",
+        "url": "https://github.com/hypengw/ncrequest.git"
+      }
+    },
+    "waywallen-dep-qextra": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1791265493,
+        "narHash": "sha256-b6qWsLXGktTawARbjYFIPjNU/5j+gh2if/FpT3vtzcE=",
+        "ref": "refs/heads/main",
+        "rev": "650cb670c15c2f34a9cf0dedd52447df7b56e761",
+        "revCount": 72,
+        "type": "git",
+        "url": "https://github.com/hypengw/QExtra.git"
+      },
+      "original": {
+        "rev": "650cb670c15c2f34a9cf0dedd52447df7b56e761",
+        "type": "git",
+        "url": "https://github.com/hypengw/QExtra.git"
+      }
+    },
+    "waywallen-dep-qml-material": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1791262629,
+        "lfs": true,
+        "narHash": "sha256-ZC4K0nc0z9b4lZmeVHW+fLmW6SUtnxUFKhkOdq8Ng5k=",
+        "ref": "refs/heads/main",
+        "rev": "98b8acd3e0bd57ca0710f2712e4dfa3fcef13113",
+        "revCount": 538,
+        "type": "git",
+        "url": "https://github.com/hypengw/QmlMaterial.git"
+      },
+      "original": {
+        "lfs": true,
+        "rev": "98b8acd3e0bd57ca0710f2712e4dfa3fcef13113",
+        "type": "git",
+        "url": "https://github.com/hypengw/QmlMaterial.git"
+      }
+    },
+    "waywallen-dep-wavsen": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1791102354,
+        "narHash": "sha256-GzeFZqh3gDwzXuENRNcj7SY0uCQU8QQQc/lzIOotO+M=",
+        "ref": "refs/heads/main",
+        "rev": "bd8a72e0f68fabc42f3d123623787398ed28dbe4",
+        "revCount": 91,
+        "type": "git",
+        "url": "https://github.com/hypengw/wavsen.git"
+      },
+      "original": {
+        "rev": "bd8a72e0f68fabc42f3d123623787398ed28dbe4",
+        "type": "git",
+        "url": "https://github.com/hypengw/wavsen.git"
       }
     },
     "waywallen-display-src": {

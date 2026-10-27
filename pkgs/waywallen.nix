@@ -2,7 +2,6 @@
   lib,
   stdenv,
   callPackage,
-  fetchgit,
   symlinkJoin,
   llvmPackages_22,
   lito,
@@ -27,21 +26,15 @@
   ffmpeg,
   sqlite,
   src,
+  gitDeps ? { },
+  gitOverrides ? { },
 }:
 let
   mkLitoBundle = callPackage ./mk-lito-bundle.nix { };
   bundleInfo = mkLitoBundle {
     lockFile = "${src}/lito.lock";
     inherit (stdenv.hostPlatform) system;
-    gitOverrides = {
-      # QmlMaterial requires Git LFS for MaterialSymbolsRounded fonts.
-      "qml-material" = fetchgit {
-        url = "https://github.com/hypengw/QmlMaterial.git";
-        rev = "98b8acd3e0bd57ca0710f2712e4dfa3fcef13113";
-        fetchLFS = true;
-        sha256 = "sha256-ZC4K0nc0z9b4lZmeVHW+fLmW6SUtnxUFKhkOdq8Ng5k=";
-      };
-    };
+    inherit gitDeps gitOverrides;
   };
 
   qt6Env = symlinkJoin {
