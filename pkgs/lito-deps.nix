@@ -115,4 +115,67 @@ rec {
         }
       ) uniqueDeps
     );
+
+  # Parse git dependencies from a Cargo.lock file
+  # Returns a list of { name, version, key, baseUrl, rev, flakeUrl }
+  parseCargoLockGitDeps =
+    lockFile:
+    let
+      lock = builtins.fromTOML (builtins.readFile lockFile);
+      gitPackages = builtins.filter (
+        p: builtins.hasAttr "source" p && lib.hasPrefix "git+" p.source
+      ) (lock.package or [ ]);
+    in
+    map (
+      p:
+      let
+        noGitPrefix = lib.removePrefix "git+" p.source;
+        parts = lib.splitString "#" noGitPrefix;
+        urlWithQuery = builtins.elemAt parts 0;
+        rev = builtins.elemAt parts 1;
+        baseUrl = builtins.elemAt (lib.splitString "?" urlWithQuery) 0;
+      in
+      {
+        inherit (p) name version;
+        key = "${p.name}-${p.version}";
+        inherit baseUrl rev;
+        flakeUrl = "git+${baseUrl}?rev=${rev}";
+      }
+    ) gitPackages;
+
+  # Generates flake inputs attribute set for git dependencies in Cargo.lock
+  extractCargoLockInputs =
+    { lockFile, prefix ? "cargo-dep" }:
+    let
+      deps = parseCargoLockGitDeps lockFile;
+    in
+    builtins.listToAttrs (
+      map (d: {
+        name = "${prefix}-${d.name}";
+        value = {
+          url = d.flakeUrl;
+          flake = false;
+        };
+      }) deps
+    );
+
+  # Resolve outputHashes attrset for importCargoLock from flake inputs
+  resolveCargoOutputHashes =
+    {
+      lockFile,
+      prefix ? "cargo-dep",
+      inputs,
+    }:
+    let
+      deps = parseCargoLockGitDeps lockFile;
+    in
+    builtins.listToAttrs (
+      map (d: {
+        name = d.key;
+        value =
+          (inputs."${prefix}-${d.name}" or (inputs.${d.name} or (
+            throw "cargo: Missing input for '${d.name}'. Expected inputs.${prefix}-${d.name}"
+          ))).narHash;
+      }) deps
+    );
 }

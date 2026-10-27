@@ -45,6 +45,7 @@
   src,
   gitDeps ? { },
   gitOverrides ? { },
+  useNixpkgsDeps ? false,
 }:
 let
   mkLitoBundle = callPackage ./mk-lito-bundle.nix { };
@@ -52,11 +53,20 @@ let
     lockFile = "${src}/lito.lock";
     inherit (stdenv.hostPlatform) system;
     inherit gitDeps gitOverrides;
+    cmakeOverrides = lib.optionals useNixpkgsDeps [
+      "glslang"
+    ];
+    ignoredGitDeps = lib.optionals useNixpkgsDeps [
+      "glslang"
+    ];
+    cmakeSearchPaths = lib.optionals useNixpkgsDeps [
+      glslang
+    ];
   };
 in
 stdenv.mkDerivation {
   pname = "waywallen-open-wallpaper-engine";
-  version = "0.3.0";
+  version = (builtins.fromTOML (builtins.readFile "${src}/lito.toml")).workspace.package.version;
 
   inherit src;
 
@@ -111,9 +121,6 @@ stdenv.mkDerivation {
   NIX_CFLAGS_COMPILE = "-Qunused-arguments -Wno-error=unused-command-line-argument";
 
   postPatch = ''
-    substituteInPlace lito.toml \
-      --replace-fail 'config-directory = "lib/cmake/quickjs"' 'config-directory = "lib64/cmake/quickjs"'
-
     substituteInPlace src/Web/cmake/CEF.cmake \
       --replace-fail 'if(OS_MAC)
     # The macOS CEF distribution is a dynamically loaded framework.' 'set_property(TARGET libcef_dll_wrapper PROPERTY CXX_SCAN_FOR_MODULES OFF)

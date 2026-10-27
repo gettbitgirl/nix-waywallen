@@ -28,6 +28,8 @@
   src,
   gitDeps ? { },
   gitOverrides ? { },
+  cargoOutputHashes ? { },
+  useNixpkgsDeps ? false,
 }:
 let
   mkLitoBundle = callPackage ./mk-lito-bundle.nix { };
@@ -52,15 +54,13 @@ let
 in
 stdenv.mkDerivation {
   pname = "waywallen";
-  version = "0.4.4";
+  version = (builtins.fromTOML (builtins.readFile "${src}/lito.toml")).workspace.package.version;
 
   inherit src;
 
   cargoDeps = rustPlatform.importCargoLock {
     lockFile = "${src}/Cargo.lock";
-    outputHashes = {
-      "mlua-extra-0.1.0" = "sha256-Dp8E/4tQHB17CxL5Fpis+gRMkvzR2/Ose13kzLreguQ=";
-    };
+    outputHashes = cargoOutputHashes;
   };
 
   nativeBuildInputs = [

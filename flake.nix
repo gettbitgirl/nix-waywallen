@@ -32,7 +32,7 @@
       flake = false;
     };
     lito-dep-rstd = {
-      url = "github:litocpp/rstd/0c755371a02ccee658fa6d63728b6078cb2f9070";
+      url = "github:litocpp/rstd/9cf950ecccb50b480ddeb51b7bcdf3b2141c9d89";
       flake = false;
     };
     lito-dep-zstd = {
@@ -40,12 +40,12 @@
       flake = false;
     };
     lito-src = {
-      url = "github:litocpp/lito/v0.8.6";
+      url = "github:litocpp/lito/v0.8.7";
       flake = false;
     };
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
     open-wallpaper-engine-src = {
-      url = "github:waywallen/open-wallpaper-engine/v0.3.0";
+      url = "github:waywallen/open-wallpaper-engine/v0.3.1";
       flake = false;
     };
     owe-dep-eigen = {
@@ -60,16 +60,20 @@
       url = "git+https://github.com/quickjs-ng/quickjs.git?rev=3c051980ab7e783dfbfb1c70c014ce5e05ecf24c";
       flake = false;
     };
-    owe-dep-spirv-reflect = {
-      url = "git+https://github.com/hypengw/SPIRV-Reflect.git?rev=355785128c1b6ba808e3a7d0e344814fe6cff502";
+    owe-dep-vectext = {
+      url = "git+https://github.com/vecren/vectext.git?rev=d918972da5c08b5afc73b812062e855fce2d847d";
       flake = false;
     };
     owe-dep-vrento = {
-      url = "git+https://github.com/vecren/vrento.git?rev=a781859c940325a909c77613b5b2795cc3d65e48";
+      url = "git+https://github.com/vecren/vrento.git?rev=11f19089b51acd71c5e4e9a4248bfc39927c47e4";
       flake = false;
     };
     owe-dep-wavsen = {
-      url = "git+https://github.com/hypengw/wavsen.git?rev=73be92f4f9db0179e93e3f28d62077a2aed77a8e";
+      url = "git+https://github.com/hypengw/wavsen.git?rev=756437443d84905a027f115c75ec6ae6b19692e7";
+      flake = false;
+    };
+    waywallen-cargo-mlua-extra = {
+      url = "git+https://github.com/hypengw/mlua-extra?rev=e0238375dc8576c2c9f4c679e3fd3cbfd4175a53";
       flake = false;
     };
     waywallen-dep-luato = {
@@ -77,27 +81,27 @@
       flake = false;
     };
     waywallen-dep-ncrequest = {
-      url = "git+https://github.com/hypengw/ncrequest.git?rev=40d40224842a080039d2a76710fbedb20ee002ac";
+      url = "git+https://github.com/hypengw/ncrequest.git?rev=2ba60ef6321f5e7f5bccc5fe086d2682bcaccf40";
       flake = false;
     };
     waywallen-dep-qextra = {
-      url = "git+https://github.com/hypengw/QExtra.git?rev=650cb670c15c2f34a9cf0dedd52447df7b56e761";
+      url = "git+https://github.com/hypengw/QExtra.git?rev=b3fd790bb4a5c5cf7c0cc0384cc140e78e627609";
       flake = false;
     };
     waywallen-dep-qml-material = {
-      url = "git+https://github.com/hypengw/QmlMaterial.git?rev=98b8acd3e0bd57ca0710f2712e4dfa3fcef13113&lfs=1";
+      url = "git+https://github.com/hypengw/QmlMaterial.git?rev=f1464c52d42732acb1363122b9b1a2360fd505b3&lfs=1";
       flake = false;
     };
     waywallen-dep-wavsen = {
-      url = "git+https://github.com/hypengw/wavsen.git?rev=bd8a72e0f68fabc42f3d123623787398ed28dbe4";
+      url = "git+https://github.com/hypengw/wavsen.git?rev=756437443d84905a027f115c75ec6ae6b19692e7";
       flake = false;
     };
     waywallen-display-src = {
-      url = "github:waywallen/waywallen-display/v0.4.2";
+      url = "github:waywallen/waywallen-display/v0.4.3";
       flake = false;
     };
     waywallen-src = {
-      url = "github:waywallen/waywallen/v0.4.4";
+      url = "github:waywallen/waywallen/v0.5.0";
       flake = false;
     };
   };

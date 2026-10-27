@@ -12,6 +12,12 @@
   gitOverrides ? { },
   # Git dependencies provided directly (e.g. from flake inputs or resolver)
   gitDeps ? { },
+  # List of CMake package names to override with system/installed versions (e.g. [ "glslang" "Eigen3" ])
+  cmakeOverrides ? [ ],
+  # List of search paths for tools.cmake
+  cmakeSearchPaths ? [ ],
+  # List of git dependency names to skip resolving (e.g. because they are overridden with cmakeOverrides)
+  ignoredGitDeps ? [ ],
   # Base registry URL (defaults to upstream litocpp registry)
   registryUrl ? "https://registry.litocpp.org/",
 }:
@@ -104,7 +110,9 @@ let
     source = e.source;
   }) (builtins.filter (e: lib.hasPrefix "git+" (e.source or "")) allExternals);
 
-  allGitSources = gitPackages ++ gitExternals;
+  allGitSources = builtins.filter (
+    g: !builtins.elem g.name ignoredGitDeps
+  ) (gitPackages ++ gitExternals);
 
   resolvedGitDeps = map (
     g:
@@ -158,10 +166,28 @@ let
     '';
 
   # 5. Generate .lito/config.toml patch section
-  configToml = lib.concatMapStringsSep "\n\n" (g: ''
-    [patch."${g.url}"]
-    path = "${g.drv}"
-  '') uniqueGitDeps;
+  cmakeOverridesToml = lib.concatMapStringsSep "\n\n" (pkg: ''
+    [tools.cmake.overrides."${pkg}"]
+    source = "installed"
+  '') cmakeOverrides;
+
+  cmakeSearchPathsToml = lib.optionalString (cmakeSearchPaths != [ ]) ''
+    [tools.cmake]
+    search-path = [
+      ${lib.concatMapStringsSep "\n      " (p: ''"${p}",'') cmakeSearchPaths}
+    ]
+  '';
+
+  configToml = lib.concatStringsSep "\n\n" (
+    builtins.filter (s: s != "") [
+      (lib.concatMapStringsSep "\n\n" (g: ''
+        [patch."${g.url}"]
+        path = "${g.drv}"
+      '') uniqueGitDeps)
+      cmakeOverridesToml
+      cmakeSearchPathsToml
+    ]
+  );
 
   # Attrset of git deps by name: { wavsen = /nix/store/...; ... }
   gitDepsMap = builtins.listToAttrs (

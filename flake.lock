@@ -2,11 +2,11 @@
   "nodes": {
     "flake-file": {
       "locked": {
-        "lastModified": 1791955343,
-        "narHash": "sha256-yquDmN2vKAtSfwJLXcEwpq9z+4txQLtlPd+Hmxss+nM=",
+        "lastModified": 1792905615,
+        "narHash": "sha256-KdGEzlRQPHBbNPD+AChjry8eWEx0TCrGKy1Hkacj+bA=",
         "owner": "denful",
         "repo": "flake-file",
-        "rev": "1281456a5218ac60ada6fcb40a8f894684940199",
+        "rev": "7b08dbc223bb1a758a515aad9653a6bf196bc772",
         "type": "github"
       },
       "original": {
@@ -65,17 +65,17 @@
     "lito-dep-rstd": {
       "flake": false,
       "locked": {
-        "lastModified": 1791887155,
-        "narHash": "sha256-JqwAOvqQYzh1v9FlA4Spuab7I6gOu/f3uiVFXiwZS0E=",
+        "lastModified": 1792515266,
+        "narHash": "sha256-oNSNNcVVnniJqsmMBYMuBJ2s24jwDK6qtKoDHFVLG2Q=",
         "owner": "litocpp",
         "repo": "rstd",
-        "rev": "0c755371a02ccee658fa6d63728b6078cb2f9070",
+        "rev": "9cf950ecccb50b480ddeb51b7bcdf3b2141c9d89",
         "type": "github"
       },
       "original": {
         "owner": "litocpp",
         "repo": "rstd",
-        "rev": "0c755371a02ccee658fa6d63728b6078cb2f9070",
+        "rev": "9cf950ecccb50b480ddeb51b7bcdf3b2141c9d89",
         "type": "github"
       }
     },
@@ -99,27 +99,27 @@
     "lito-src": {
       "flake": false,
       "locked": {
-        "lastModified": 1791909470,
-        "narHash": "sha256-5KOC3DQe5N3/KrHNObzF4q3kG/4yxu674NCbEDzD28A=",
+        "lastModified": 1792515287,
+        "narHash": "sha256-2VWgxz5tbgzzCe7IvUYVPIg8kc9ydzvq33lmwl1Tuq4=",
         "owner": "litocpp",
         "repo": "lito",
-        "rev": "f9d295560796ee2503dec6948a1b08edf82cda0d",
+        "rev": "ff254f2584667ab430dc4891004b8221a7b1113b",
         "type": "github"
       },
       "original": {
         "owner": "litocpp",
-        "ref": "v0.8.6",
+        "ref": "v0.8.7",
         "repo": "lito",
         "type": "github"
       }
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1784796856,
-        "narHash": "sha256-wWFrV5/Qbm+lyt5x20E/bSbfJiGKMo4RCxZV8cl/WZI=",
+        "lastModified": 1792773339,
+        "narHash": "sha256-rZLrzrC6i+jnTAlvPZHogKDulY7WWDEv9hJeHieO7Zw=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "e2587caef70cea85dd97d7daab492899902dbf5d",
+        "rev": "3ec636362e1816bc2f0888fa0fa2c69f1bc9e504",
         "type": "github"
       },
       "original": {
@@ -132,16 +132,16 @@
     "open-wallpaper-engine-src": {
       "flake": false,
       "locked": {
-        "lastModified": 1790332101,
-        "narHash": "sha256-YQzPqrjdqs4FcHqDBA5mydAewByljGrAQeFXE+ERw5k=",
+        "lastModified": 1792517327,
+        "narHash": "sha256-GvG65xFT3Dd+dfVkY/BzJfsCmgUgfaYYexug8y+JYCw=",
         "owner": "waywallen",
         "repo": "open-wallpaper-engine",
-        "rev": "e71152cbabc9b38224a47a885c75edc4cada91f4",
+        "rev": "5cd2129608dd96bcba90e74c8647f094b2efdf1b",
         "type": "github"
       },
       "original": {
         "owner": "waywallen",
-        "ref": "v0.3.0",
+        "ref": "v0.3.1",
         "repo": "open-wallpaper-engine",
         "type": "github"
       }
@@ -197,36 +197,36 @@
         "url": "https://github.com/quickjs-ng/quickjs.git"
       }
     },
-    "owe-dep-spirv-reflect": {
+    "owe-dep-vectext": {
       "flake": false,
       "locked": {
-        "lastModified": 1786722515,
-        "narHash": "sha256-zJ2mHSp5Tnyp6/4XlBrVjr3MnkOxmFdSHESP6e+nUSY=",
+        "lastModified": 1792502743,
+        "narHash": "sha256-sY5lbWzZljT+x+tGRtlQSDHX4I1RvuAOtmndCakZUNM=",
         "ref": "refs/heads/main",
-        "rev": "355785128c1b6ba808e3a7d0e344814fe6cff502",
-        "revCount": 519,
+        "rev": "d918972da5c08b5afc73b812062e855fce2d847d",
+        "revCount": 12,
         "type": "git",
-        "url": "https://github.com/hypengw/SPIRV-Reflect.git"
+        "url": "https://github.com/vecren/vectext.git"
       },
       "original": {
-        "rev": "355785128c1b6ba808e3a7d0e344814fe6cff502",
+        "rev": "d918972da5c08b5afc73b812062e855fce2d847d",
         "type": "git",
-        "url": "https://github.com/hypengw/SPIRV-Reflect.git"
+        "url": "https://github.com/vecren/vectext.git"
       }
     },
     "owe-dep-vrento": {
       "flake": false,
       "locked": {
-        "lastModified": 1790325551,
-        "narHash": "sha256-CYeVnElpWfZadL+5xXOVUJgUa4EEWRv5NCDfd/4p7fc=",
+        "lastModified": 1792507477,
+        "narHash": "sha256-lBM2/DZ819p9MhJHAyYV/vl1A3ZX2juZsSp+M+kfJhI=",
         "ref": "refs/heads/main",
-        "rev": "a781859c940325a909c77613b5b2795cc3d65e48",
-        "revCount": 209,
+        "rev": "11f19089b51acd71c5e4e9a4248bfc39927c47e4",
+        "revCount": 232,
         "type": "git",
         "url": "https://github.com/vecren/vrento.git"
       },
       "original": {
-        "rev": "a781859c940325a909c77613b5b2795cc3d65e48",
+        "rev": "11f19089b51acd71c5e4e9a4248bfc39927c47e4",
         "type": "git",
         "url": "https://github.com/vecren/vrento.git"
       }
@@ -234,16 +234,16 @@
     "owe-dep-wavsen": {
       "flake": false,
       "locked": {
-        "lastModified": 1790250746,
-        "narHash": "sha256-mvfNRwLaAkQ5woR7PuaY6fjeLQ08ru0+fUXqUtI6WbU=",
+        "lastModified": 1792409744,
+        "narHash": "sha256-yklinRntxvrukLcLmRBMa2HREoZ3mqDC/+R0zSFQNfI=",
         "ref": "refs/heads/main",
-        "rev": "73be92f4f9db0179e93e3f28d62077a2aed77a8e",
-        "revCount": 89,
+        "rev": "756437443d84905a027f115c75ec6ae6b19692e7",
+        "revCount": 96,
         "type": "git",
         "url": "https://github.com/hypengw/wavsen.git"
       },
       "original": {
-        "rev": "73be92f4f9db0179e93e3f28d62077a2aed77a8e",
+        "rev": "756437443d84905a027f115c75ec6ae6b19692e7",
         "type": "git",
         "url": "https://github.com/hypengw/wavsen.git"
       }
@@ -262,9 +262,10 @@
         "owe-dep-eigen": "owe-dep-eigen",
         "owe-dep-glslang": "owe-dep-glslang",
         "owe-dep-quickjs": "owe-dep-quickjs",
-        "owe-dep-spirv-reflect": "owe-dep-spirv-reflect",
+        "owe-dep-vectext": "owe-dep-vectext",
         "owe-dep-vrento": "owe-dep-vrento",
         "owe-dep-wavsen": "owe-dep-wavsen",
+        "waywallen-cargo-mlua-extra": "waywallen-cargo-mlua-extra",
         "waywallen-dep-luato": "waywallen-dep-luato",
         "waywallen-dep-ncrequest": "waywallen-dep-ncrequest",
         "waywallen-dep-qextra": "waywallen-dep-qextra",
@@ -272,6 +273,23 @@
         "waywallen-dep-wavsen": "waywallen-dep-wavsen",
         "waywallen-display-src": "waywallen-display-src",
         "waywallen-src": "waywallen-src"
+      }
+    },
+    "waywallen-cargo-mlua-extra": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1791703395,
+        "narHash": "sha256-d/ByunzpSj4kM42lK6/6sNpJ1tseUldB7PK9UapJBQU=",
+        "ref": "refs/heads/main",
+        "rev": "e0238375dc8576c2c9f4c679e3fd3cbfd4175a53",
+        "revCount": 10,
+        "type": "git",
+        "url": "https://github.com/hypengw/mlua-extra"
+      },
+      "original": {
+        "rev": "e0238375dc8576c2c9f4c679e3fd3cbfd4175a53",
+        "type": "git",
+        "url": "https://github.com/hypengw/mlua-extra"
       }
     },
     "waywallen-dep-luato": {
@@ -294,16 +312,16 @@
     "waywallen-dep-ncrequest": {
       "flake": false,
       "locked": {
-        "lastModified": 1791214457,
-        "narHash": "sha256-AOiuf9dJUWdVedfJ0ZdXBzbuSI+9U0Gko0xj6jT7R/0=",
+        "lastModified": 1792431121,
+        "narHash": "sha256-9xf3TJwmri95YcXAPVv4JtgU2q1u6RtrL40sI4Ouk2c=",
         "ref": "refs/heads/master",
-        "rev": "40d40224842a080039d2a76710fbedb20ee002ac",
-        "revCount": 141,
+        "rev": "2ba60ef6321f5e7f5bccc5fe086d2682bcaccf40",
+        "revCount": 147,
         "type": "git",
         "url": "https://github.com/hypengw/ncrequest.git"
       },
       "original": {
-        "rev": "40d40224842a080039d2a76710fbedb20ee002ac",
+        "rev": "2ba60ef6321f5e7f5bccc5fe086d2682bcaccf40",
         "type": "git",
         "url": "https://github.com/hypengw/ncrequest.git"
       }
@@ -311,16 +329,16 @@
     "waywallen-dep-qextra": {
       "flake": false,
       "locked": {
-        "lastModified": 1791265493,
-        "narHash": "sha256-b6qWsLXGktTawARbjYFIPjNU/5j+gh2if/FpT3vtzcE=",
+        "lastModified": 1792409744,
+        "narHash": "sha256-ju3jKTpZkxy8+gxAgn9UAtXx73KQF+J+N9CyxJAifYw=",
         "ref": "refs/heads/main",
-        "rev": "650cb670c15c2f34a9cf0dedd52447df7b56e761",
-        "revCount": 72,
+        "rev": "b3fd790bb4a5c5cf7c0cc0384cc140e78e627609",
+        "revCount": 75,
         "type": "git",
         "url": "https://github.com/hypengw/QExtra.git"
       },
       "original": {
-        "rev": "650cb670c15c2f34a9cf0dedd52447df7b56e761",
+        "rev": "b3fd790bb4a5c5cf7c0cc0384cc140e78e627609",
         "type": "git",
         "url": "https://github.com/hypengw/QExtra.git"
       }
@@ -328,18 +346,18 @@
     "waywallen-dep-qml-material": {
       "flake": false,
       "locked": {
-        "lastModified": 1791262629,
+        "lastModified": 1792509011,
         "lfs": true,
-        "narHash": "sha256-ZC4K0nc0z9b4lZmeVHW+fLmW6SUtnxUFKhkOdq8Ng5k=",
+        "narHash": "sha256-FnRdZZ7O8IjMMSGNQRWy5/2XLMhldxnTSCu0NQzOHk0=",
         "ref": "refs/heads/main",
-        "rev": "98b8acd3e0bd57ca0710f2712e4dfa3fcef13113",
-        "revCount": 538,
+        "rev": "f1464c52d42732acb1363122b9b1a2360fd505b3",
+        "revCount": 552,
         "type": "git",
         "url": "https://github.com/hypengw/QmlMaterial.git"
       },
       "original": {
         "lfs": true,
-        "rev": "98b8acd3e0bd57ca0710f2712e4dfa3fcef13113",
+        "rev": "f1464c52d42732acb1363122b9b1a2360fd505b3",
         "type": "git",
         "url": "https://github.com/hypengw/QmlMaterial.git"
       }
@@ -347,16 +365,16 @@
     "waywallen-dep-wavsen": {
       "flake": false,
       "locked": {
-        "lastModified": 1791102354,
-        "narHash": "sha256-GzeFZqh3gDwzXuENRNcj7SY0uCQU8QQQc/lzIOotO+M=",
+        "lastModified": 1792409744,
+        "narHash": "sha256-yklinRntxvrukLcLmRBMa2HREoZ3mqDC/+R0zSFQNfI=",
         "ref": "refs/heads/main",
-        "rev": "bd8a72e0f68fabc42f3d123623787398ed28dbe4",
-        "revCount": 91,
+        "rev": "756437443d84905a027f115c75ec6ae6b19692e7",
+        "revCount": 96,
         "type": "git",
         "url": "https://github.com/hypengw/wavsen.git"
       },
       "original": {
-        "rev": "bd8a72e0f68fabc42f3d123623787398ed28dbe4",
+        "rev": "756437443d84905a027f115c75ec6ae6b19692e7",
         "type": "git",
         "url": "https://github.com/hypengw/wavsen.git"
       }
@@ -364,16 +382,16 @@
     "waywallen-display-src": {
       "flake": false,
       "locked": {
-        "lastModified": 1791942482,
-        "narHash": "sha256-VScmByqw5Ue5Md3KEAjJLGFHlNxyS8GFbgiMdi+Y31k=",
+        "lastModified": 1792516116,
+        "narHash": "sha256-pYc7n+FB3Y3BHP+bkExhqZWXZPUEXbNcTYFQIj+rBS4=",
         "owner": "waywallen",
         "repo": "waywallen-display",
-        "rev": "a4444964a097591bcffbf52ad0d890a383653d2d",
+        "rev": "f8119f0483cc30baca20ec9b697070cb9a1724e6",
         "type": "github"
       },
       "original": {
         "owner": "waywallen",
-        "ref": "v0.4.2",
+        "ref": "v0.4.3",
         "repo": "waywallen-display",
         "type": "github"
       }
@@ -381,16 +399,16 @@
     "waywallen-src": {
       "flake": false,
       "locked": {
-        "lastModified": 1791282784,
-        "narHash": "sha256-/ML7KKSes00fT/2fpRcAu0TjTSuSD2lMmXcOmOu4vpI=",
+        "lastModified": 1792517518,
+        "narHash": "sha256-z1OnbtT/1TZOBtrz3srCj7SPWaQphUQBXIDYw745XEE=",
         "owner": "waywallen",
         "repo": "waywallen",
-        "rev": "f42cb1a6b12301dfd1b46e1ef1cfbce6140bc5d3",
+        "rev": "564eb02e25bab1908dce6ae811c15984a8039e7f",
         "type": "github"
       },
       "original": {
         "owner": "waywallen",
-        "ref": "v0.4.4",
+        "ref": "v0.5.0",
         "repo": "waywallen",
         "type": "github"
       }
